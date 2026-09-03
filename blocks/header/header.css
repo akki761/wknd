@@ -26,7 +26,7 @@ header nav .nav-utility-inner {
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 4px 24px;
+  padding: 0 24px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -98,7 +98,7 @@ header nav .nav-main-inner {
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 22px 24px;
   display: grid;
   grid-template-areas:
     'hamburger brand tools'
@@ -169,7 +169,7 @@ header nav .nav-brand {
 }
 
 header nav .nav-brand img {
-  height: 36px;
+  height: 48px;
   width: auto;
   display: block;
 }
@@ -267,9 +267,18 @@ header nav .nav-search input {
     justify-content: flex-end;
     align-items: center;
     padding: 0;
+    width: auto;
+  }
+
+  /* reset the mobile full-width li: on desktop each item is only as wide as
+     its label + padding (source links are ~95px, butting via 17px padding). */
+  header nav .nav-sections li {
+    width: auto;
+    flex: 0 0 auto;
   }
 
   header nav .nav-sections a {
+    display: inline-block;
     padding: 15px 17px;
     font-size: 14px;
     font-weight: 400;
