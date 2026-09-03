@@ -60,6 +60,7 @@ var CustomImportScript = (() => {
         "footer.experiencefragment.cmp-experiencefragment--footer"
       ]);
       WebImporter.DOMUtils.remove(element, ["meta"]);
+      WebImporter.DOMUtils.remove(element, ["h3.cmp-contentfragment__title"]);
     }
   }
 

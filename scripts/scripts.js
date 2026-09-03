@@ -265,8 +265,29 @@ function redirectRootToHome() {
   return false;
 }
 
+/**
+ * Adds a template class to <body> based on the URL path so template-specific
+ * CSS (e.g. the article reading-column width, adventure-detail two-column
+ * layout) can be scoped without affecting other templates like the homepage.
+ * - /us/en/magazine/<slug>  -> tpl-article
+ * - /us/en/adventures/<slug> -> tpl-adventure-detail
+ * Listing pages (/magazine, /adventures with no trailing slug) are NOT tagged.
+ */
+function decorateTemplateFromPath() {
+  const path = window.location.pathname.replace(/\.html$/, '').replace(/\/$/, '');
+  // strip the optional local /content prefix, then the /us/en locale prefix
+  const rel = path.replace(/^\/content/, '').replace(/^\/us\/en/, '');
+  const parts = rel.split('/').filter(Boolean); // e.g. ['magazine','arctic-surfing']
+  if (parts.length === 2 && parts[0] === 'magazine') {
+    document.body.classList.add('tpl-article');
+  } else if (parts.length === 2 && parts[0] === 'adventures') {
+    document.body.classList.add('tpl-adventure-detail');
+  }
+}
+
 async function loadPage() {
   if (redirectRootToHome()) return;
+  decorateTemplateFromPath();
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();

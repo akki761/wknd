@@ -36,5 +36,11 @@ export default function transform(hookName, element, payload) {
 
     // Stray empty <meta> tags emitted inside cmp-image wrappers (e.g. lines 183, 204, 227).
     WebImporter.DOMUtils.remove(element, ['meta']);
+
+    // Content-fragment internal title (article template): the CF renders its own
+    // <h3 class="cmp-contentfragment__title"> which the source HIDES via CSS. It
+    // duplicates the page <h1 class="cmp-title__text">, so drop it — otherwise the
+    // migrated article shows the title twice (once as h1, once as h3).
+    WebImporter.DOMUtils.remove(element, ['h3.cmp-contentfragment__title']);
   }
 }

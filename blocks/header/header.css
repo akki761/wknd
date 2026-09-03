@@ -2,11 +2,18 @@
    Colors from source: utility bar #202020 / text #f7f7f7; main row white / text #202020;
    nav links uppercase Source Sans Pro; active/hover accent yellow #ffc700 */
 
-header .nav-wrapper {
+/* The header wrapper (the <header> element itself) is the sticky element.
+   Its containing block is <body> (full page height), so it stays pinned while
+   scrolling. Making the inner .nav-wrapper sticky does NOT work — its containing
+   block is the short header block, so it releases after ~125px of scroll. */
+header.header-wrapper {
   position: sticky;
   top: 0;
-  width: 100%;
   z-index: 20;
+}
+
+header .nav-wrapper {
+  width: 100%;
   background-color: #fff;
 }
 
