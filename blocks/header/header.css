@@ -10,6 +10,7 @@ header.header-wrapper {
   position: sticky;
   top: 0;
   z-index: 20;
+  transition: margin-left 0.25s ease; /* mobile drawer page-push (see below) */
 }
 
 header .nav-wrapper {
@@ -121,12 +122,21 @@ header nav .nav-hamburger {
 }
 
 header nav .nav-hamburger button {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border: 0;
+  border: 2px solid transparent;
   background: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Open state: the source frames the hamburger with a yellow border box (the
+   icon stays as three lines, it does not morph to a cross). */
+header nav[aria-expanded='true'] .nav-hamburger button {
+  border-color: #ffc700;
 }
 
 header nav .nav-hamburger-icon,
@@ -155,21 +165,6 @@ header nav .nav-hamburger-icon::after {
   top: 7px;
 }
 
-/* hamburger morphs to a cross when the menu is open */
-header nav[aria-expanded='true'] .nav-hamburger-icon {
-  background: transparent;
-}
-
-header nav[aria-expanded='true'] .nav-hamburger-icon::before {
-  top: 0;
-  transform: rotate(45deg);
-}
-
-header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-  top: 0;
-  transform: rotate(-45deg);
-}
-
 /* brand/logo */
 header nav .nav-brand {
   grid-area: brand;
@@ -181,18 +176,61 @@ header nav .nav-brand img {
   display: block;
 }
 
-/* nav links — hidden by default on mobile, shown full-width when menu open */
+/* nav links — mobile: a dark drawer pinned to the viewport's LEFT edge. It is
+   revealed by PUSHING the whole page (header/main/footer) to the right rather
+   than overlaying it (matches the source mobile nav). The drawer stays put while
+   the page shifts, exposing it in the vacated left strip. On desktop (≥900px)
+   it's reset to an inline horizontal row below.
+   NOTE: the drawer is position:fixed and lives INSIDE the header, so the header
+   must be pushed with margin-left (NOT transform) — a transformed ancestor would
+   become the drawer's containing block and drag it along. main/footer contain no
+   drawer, so they use transform (smoother). */
 header nav .nav-sections {
   grid-area: sections;
-  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 280px;
+  margin: 0;
+  padding: 24px 0;
+  background-color: #202020;
+  overflow-y: auto;
 
-  /* full-bleed: expand past the 24px inner padding so the drawer spans the viewport */
-  width: calc(100% + 48px);
-  margin: 8px -24px 0;
+  /* off-canvas (and non-interactive) until the menu opens, so it never overlaps
+     the closed header/hamburger; revealed together with the page-push below. */
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s linear 0.25s;
 }
 
-header nav[aria-expanded='true'] .nav-sections {
-  display: block;
+body.nav-open header nav .nav-sections {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.25s ease;
+}
+
+/* Page-push driven by body.nav-open (set by the hamburger toggle in header.js).
+   The header's own margin-left transition is declared on header.header-wrapper
+   at the top of this file (merged there to avoid a duplicate selector). */
+main,
+footer {
+  transition: transform 0.25s ease;
+}
+
+body.nav-open .header-wrapper {
+  margin-left: 280px;
+}
+
+body.nav-open main,
+body.nav-open footer {
+  transform: translateX(280px);
+}
+
+/* keep the pushed-off-screen right edge from adding a horizontal scrollbar */
+body.nav-open {
+  overflow-x: hidden;
 }
 
 header nav .nav-sections ul {
@@ -205,13 +243,14 @@ header nav .nav-sections ul {
 header nav .nav-sections li {
   padding: 0;
   width: 100%;
+  border-bottom: 1px solid rgb(235 235 235 / 12%);
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 header nav .nav-sections a {
   display: block;
-  padding: 14px 24px;
-  color: #202020;
+  padding: 16px 24px;
+  color: #ebebeb;
   text-decoration: none;
   text-transform: uppercase;
   font-size: 16px;
@@ -236,9 +275,9 @@ header nav .nav-tools {
 
 header nav .nav-search input {
   box-sizing: border-box;
-  height: 40px;
+  height: 42px; /* source search input height */
   width: 100%;
-  max-width: 220px;
+  max-width: 166px; /* source search input width */
   padding: 1px 16px 1px 32px;
   border: 0;
   background-color: rgb(235 235 235 / 54%);
@@ -262,11 +301,29 @@ header nav .nav-search input {
     gap: 24px;
   }
 
-  /* nav links always visible, horizontal, right-aligned; reset mobile full-bleed */
+  /* nav links always visible, horizontal, right-aligned; reset the mobile
+     fixed-position drawer (position/background/size) back to inline. */
   header nav .nav-sections {
-    display: block;
+    position: static;
+    inset: auto;
     width: auto;
+    height: auto;
     margin: 0;
+    padding: 0;
+    background: none;
+    overflow: visible;
+    transform: none;
+    visibility: visible;
+  }
+
+  /* never push the page on desktop, even if a stale nav-open class lingers */
+  body.nav-open .header-wrapper {
+    margin-left: 0;
+  }
+
+  body.nav-open main,
+  body.nav-open footer {
+    transform: none;
   }
 
   header nav .nav-sections ul {
@@ -282,13 +339,20 @@ header nav .nav-search input {
   header nav .nav-sections li {
     width: auto;
     flex: 0 0 auto;
+    border-bottom: 0;
   }
 
   header nav .nav-sections a {
     display: inline-block;
     padding: 15px 17px;
+    color: #202020;
     font-size: 14px;
     font-weight: 400;
+
+    /* tight line-height so the link box (~48px) matches the search input height
+       (42px) — without this the link inherits body line-height 1.6 (~53px) and
+       the shorter search bar looks sunk between the taller nav items. */
+    line-height: 18px;
   }
 
   /* hide the mobile-only "Home" item on desktop, matching the source */

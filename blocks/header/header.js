@@ -26,15 +26,21 @@ function closeAll(nav) {
  * Toggles the mobile menu open/closed.
  */
 function toggleMenu(nav, forceExpanded) {
-  const expanded = forceExpanded !== undefined
+  // Resolve the desired final state. With no arg, flip the current state; with
+  // forceExpanded given, use it directly (true = open, false = closed).
+  const open = forceExpanded !== undefined
     ? forceExpanded
-    : nav.getAttribute('aria-expanded') === 'true';
-  nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    : nav.getAttribute('aria-expanded') !== 'true';
+  nav.setAttribute('aria-expanded', open ? 'true' : 'false');
   const hamburger = nav.querySelector('.nav-hamburger button');
   if (hamburger) {
-    hamburger.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
+    hamburger.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
   }
-  document.body.style.overflowY = (!expanded && !isDesktop.matches) ? 'hidden' : '';
+  // Source mobile behavior: the drawer sits at the viewport's left edge and the
+  // whole page (header/main/footer) is PUSHED right to reveal it (not an
+  // overlay). The push is driven by a body class so CSS can shift those siblings.
+  document.body.classList.toggle('nav-open', open && !isDesktop.matches);
+  document.body.style.overflowY = (open && !isDesktop.matches) ? 'hidden' : '';
 }
 
 /**
@@ -72,7 +78,7 @@ export default async function decorate(block) {
   const sections = doc ? [...doc.body.children].filter((el) => el.tagName === 'DIV') : [];
   // Section order from nav.plain.html:
   // 0: utility (sign-in + locale list), 1: brand (logo), 2: main nav links, 3: search
-  const [utility, brand, mainNav, search] = sections;
+  const [utility, brand, mainNav] = sections;
 
   // --- Utility bar (top, dark) ---
   const utilityBar = document.createElement('div');
@@ -186,12 +192,13 @@ export default async function decorate(block) {
     navLinks.append(list);
   }
 
-  // search
+  // search — a functional control, always rendered (do NOT gate on a fragment
+  // ':search:' marker: the published nav fragment may omit it, which would drop
+  // the search box on mobile/tablet/desktop). The control is code-driven, so the
+  // fragment's trailing search section is not read at all.
   const searchEl = document.createElement('div');
   searchEl.className = 'nav-tools';
-  if (search && search.textContent.includes(':search:')) {
-    buildSearch(searchEl);
-  }
+  buildSearch(searchEl);
 
   mainInner.append(hamburger, brandEl, navLinks, searchEl);
   mainBar.append(mainInner);
@@ -207,6 +214,7 @@ export default async function decorate(block) {
   isDesktop.addEventListener('change', () => {
     closeAll(nav);
     toggleMenu(nav, false);
+    document.body.classList.remove('nav-open');
     document.body.style.overflowY = '';
   });
 

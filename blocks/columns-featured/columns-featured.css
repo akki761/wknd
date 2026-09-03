@@ -23,9 +23,10 @@
   line-height: 1.2;
 }
 
+/* source .cmp-teaser__pretitle is upright, not italic, despite the <em> tag */
 .columns-featured > div > div:not(.columns-featured-img-col) > p:first-child em {
   font-weight: 700;
-  font-style: italic;
+  font-style: normal;
 }
 
 /* Title */
