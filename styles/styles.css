@@ -100,7 +100,11 @@ footer {
 }
 
 header {
-  height: var(--nav-height);
+  /* min-height, not height: the mobile/tablet nav (utility bar + stacked logo
+     row) is taller than --nav-height (~131px vs 89px). A fixed height clipped
+     the overflow and let the nav overlap the first section's title. min-height
+     keeps the 89px floor while letting the header grow to fit its content. */
+  min-height: var(--nav-height);
 }
 
 header .header,
