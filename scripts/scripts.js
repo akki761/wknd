@@ -143,6 +143,36 @@ function decorateButtons(main) {
 }
 
 /**
+ * Applies section-metadata as classes on the section, then removes the block.
+ * The vendored aem.js decorateSections does not process section metadata, so we
+ * handle it here: each `.section-metadata` block holds key/value rows (e.g.
+ * style / grey). We add the style token(s) as classes to the section's
+ * top-level wrapper div and drop the block so it never loads as JS.
+ * @param {Element} main The main element
+ */
+function processSectionMetadata(main) {
+  main.querySelectorAll(':scope > div > div.section-metadata').forEach((meta) => {
+    const section = meta.parentElement;
+    [...meta.children].forEach((row) => {
+      const cells = [...row.children];
+      if (cells.length >= 2) {
+        const key = cells[0].textContent.trim().toLowerCase();
+        const value = cells[1].textContent.trim();
+        if (key === 'style' && value) {
+          value.split(',').forEach((s) => {
+            const cls = s.trim().toLowerCase().replace(/\s+/g, '-');
+            if (cls) section.classList.add(cls);
+          });
+        } else if (value) {
+          section.dataset[key] = value;
+        }
+      }
+    });
+    meta.remove();
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -150,6 +180,7 @@ function decorateButtons(main) {
 export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
+  processSectionMetadata(main);
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
@@ -208,7 +239,34 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
 }
 
+/**
+ * Redirects the site root to the WKND homepage (/us/en).
+ * WKND's homepage is a locale landing page, not the bare root, so requests to
+ * `/` or `/index` are sent to `/us/en`. Scoped to the exact root paths only,
+ * so every other page renders normally. Returns true if a redirect was issued.
+ */
+function redirectRootToHome() {
+  const { pathname } = window.location;
+  // Production/preview serves content at the root; the local dev server mounts
+  // it under /content. Handle the bare root in both, preserving the prefix.
+  const roots = {
+    '/': '/us/en',
+    '/index': '/us/en',
+    '/index.html': '/us/en',
+    '/content': '/content/us/en',
+    '/content/': '/content/us/en',
+    '/content/index': '/content/us/en',
+    '/content/index.html': '/content/us/en',
+  };
+  if (roots[pathname]) {
+    window.location.replace(roots[pathname]);
+    return true;
+  }
+  return false;
+}
+
 async function loadPage() {
+  if (redirectRootToHome()) return;
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();

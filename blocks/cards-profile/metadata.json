@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-profile",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-09-03T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/about-us.html",
+    "originPage": "WKND US English About Us (content-listing template)",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "profile",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "circular photo + name (heading) + role line + row of 3 social icon links per card",
+    "buttonCount": 3,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "team / contributor / staff profile grids",
+      "people or member listings with photo, name, role, and social links",
+      "any centered card grid with a circular avatar and short text"
+    ],
+    "notSuitableFor": [
+      "article/adventure teaser grids linking to detail pages (use cards-teaser)",
+      "text-only card lists (use cards no-images)",
+      "single featured split panels (use columns-featured)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/about-us"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-03T00:00:00.000Z"
+  }
+}

@@ -1,272 +1,282 @@
-/* header and nav layout */
+/* WKND header — mobile-first
+   Colors from source: utility bar #202020 / text #f7f7f7; main row white / text #202020;
+   nav links uppercase Source Sans Pro; active/hover accent yellow #ffc700 */
+
 header .nav-wrapper {
-  background-color: var(--background-color);
+  position: sticky;
+  top: 0;
   width: 100%;
-  z-index: 2;
-  position: fixed;
+  z-index: 20;
+  background-color: #fff;
 }
 
 header nav {
   box-sizing: border-box;
-  display: grid;
-  grid-template:
-    'hamburger brand tools' var(--nav-height)
-    'sections sections sections' 1fr / auto 1fr auto;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* ---------- Utility bar (top, dark) ---------- */
+header nav .nav-utility {
+  background-color: #202020;
+  color: #f7f7f7;
+  font-size: 14px;
+}
+
+header nav .nav-utility-inner {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4px 24px;
+  display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0 24px;
-  margin: auto;
-  max-width: 1248px;
-  height: var(--nav-height);
-  padding: 0 24px;
-  font-family: var(--body-font-family);
+  gap: 24px;
+  min-height: 21px;
 }
 
-header nav[aria-expanded='true'] {
-  grid-template:
-    'hamburger brand' var(--nav-height)
-    'sections sections' 1fr
-    'tools tools' var(--nav-height) / auto 1fr;
-  overflow-y: auto;
-  min-height: 100dvh;
+header nav .nav-utility a,
+header nav .nav-lang-toggle {
+  color: #f7f7f7;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
 }
 
-@media (width >= 900px) {
-  header .nav-wrapper {
-    position: relative;
-  }
-
-  header nav {
-    display: flex;
-    justify-content: space-between;
-    gap: 0 32px;
-    max-width: 1264px;
-    padding: 0 32px;
-  }
-
-  header nav[aria-expanded='true'] {
-    min-height: 0;
-    overflow: visible;
-  }
+header nav .nav-utility a:hover,
+header nav .nav-lang-toggle:hover {
+  color: #ffc700;
 }
 
-header nav p {
-  margin: 0;
-  line-height: 1;
+/* locale dropdown */
+header nav .nav-locale {
+  position: relative;
 }
 
-header nav a:any-link {
-  color: currentcolor;
+header nav .nav-lang-toggle::after {
+  content: ' ▾';
+  font-size: 10px;
 }
 
-/* hamburger */
+header nav .nav-locale-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin: 4px 0 0;
+  padding: 8px 0;
+  list-style: none;
+  background: #202020;
+  min-width: 120px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
+  z-index: 5;
+}
+
+header nav .nav-locale-menu li {
+  padding: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+header nav .nav-locale-menu a {
+  display: block;
+  padding: 6px 16px;
+}
+
+header nav .nav-lang-toggle[aria-expanded='true'] + .nav-locale-menu {
+  display: block;
+}
+
+/* ---------- Main bar (logo + nav + search) ---------- */
+header nav .nav-main {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+header nav .nav-main-inner {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: grid;
+  grid-template-areas:
+    'hamburger brand tools'
+    'sections sections sections';
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+/* hamburger (mobile only) */
 header nav .nav-hamburger {
   grid-area: hamburger;
-  height: 22px;
-  display: flex;
-  align-items: center;
 }
 
 header nav .nav-hamburger button {
-  height: 22px;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  background-color: var(--background-color);
-  color: inherit;
-  overflow: initial;
-  text-overflow: initial;
-  white-space: initial;
+  border: 0;
+  background: none;
+  cursor: pointer;
 }
 
 header nav .nav-hamburger-icon,
 header nav .nav-hamburger-icon::before,
 header nav .nav-hamburger-icon::after {
-  box-sizing: border-box;
   display: block;
   position: relative;
-  width: 20px;
+  width: 22px;
+  height: 2px;
+  background: #202020;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 header nav .nav-hamburger-icon::before,
 header nav .nav-hamburger-icon::after {
   content: '';
   position: absolute;
-  background: currentcolor;
+  left: 0;
 }
 
-header nav[aria-expanded='false'] .nav-hamburger-icon,
-header nav[aria-expanded='false'] .nav-hamburger-icon::before,
-header nav[aria-expanded='false'] .nav-hamburger-icon::after {
-  height: 2px;
-  border-radius: 2px;
-  background: currentcolor;
+header nav .nav-hamburger-icon::before {
+  top: -7px;
 }
 
-header nav[aria-expanded='false'] .nav-hamburger-icon::before {
-  top: -6px;
+header nav .nav-hamburger-icon::after {
+  top: 7px;
 }
 
-header nav[aria-expanded='false'] .nav-hamburger-icon::after {
-  top: 6px;
-}
-
+/* hamburger morphs to a cross when the menu is open */
 header nav[aria-expanded='true'] .nav-hamburger-icon {
-  height: 22px;
+  background: transparent;
 }
 
-header nav[aria-expanded='true'] .nav-hamburger-icon::before,
-header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-  top: 3px;
-  left: 1px;
+header nav[aria-expanded='true'] .nav-hamburger-icon::before {
+  top: 0;
   transform: rotate(45deg);
-  transform-origin: 2px 1px;
-  width: 24px;
-  height: 2px;
-  border-radius: 2px;
 }
 
 header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-  top: unset;
-  bottom: 3px;
+  top: 0;
   transform: rotate(-45deg);
 }
 
-@media (width >= 900px) {
-  header nav .nav-hamburger {
-    display: none;
-    visibility: hidden;
-  }
-}
-
-/* brand */
-header .nav-brand {
+/* brand/logo */
+header nav .nav-brand {
   grid-area: brand;
-  flex-basis: 128px;
-  font-size: var(--heading-font-size-s);
-  font-weight: 700;
-  line-height: 1;
 }
 
 header nav .nav-brand img {
-  width: 128px;
-  height: auto;
+  height: 36px;
+  width: auto;
+  display: block;
 }
 
-/* sections */
+/* nav links — hidden by default on mobile, shown full-width when menu open */
 header nav .nav-sections {
   grid-area: sections;
-  flex: 1 1 auto;
   display: none;
-  visibility: hidden;
+
+  /* full-bleed: expand past the 24px inner padding so the drawer spans the viewport */
+  width: calc(100% + 48px);
+  margin: 8px -24px 0;
 }
 
 header nav[aria-expanded='true'] .nav-sections {
   display: block;
-  visibility: visible;
-  align-self: start;
 }
 
 header nav .nav-sections ul {
   list-style: none;
-  padding-left: 0;
-  font-size: var(--body-font-size-s);
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
-header nav .nav-sections ul > li {
-  font-weight: 500;
+header nav .nav-sections li {
+  padding: 0;
+  width: 100%;
 }
 
-header nav .nav-sections ul > li > ul {
-  margin-top: 0;
+/* stylelint-disable-next-line no-descending-specificity */
+header nav .nav-sections a {
+  display: block;
+  padding: 14px 24px;
+  color: #202020;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
 }
 
-header nav .nav-sections ul > li > ul > li {
-  font-weight: 400;
+header nav .nav-sections a:hover,
+header nav .nav-sections li.active a {
+  color: #202020;
+  background-color: #ffc700;
 }
 
+/* "Home" is mobile-only in the source header */
+header nav .nav-sections li.mobile-only {
+  display: block;
+}
+
+/* search */
+header nav .nav-tools {
+  grid-area: tools;
+}
+
+header nav .nav-search input {
+  box-sizing: border-box;
+  height: 40px;
+  width: 100%;
+  max-width: 220px;
+  padding: 1px 16px 1px 32px;
+  border: 0;
+  background-color: rgb(235 235 235 / 54%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23202020" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 8px center;
+  background-size: 16px;
+  font-size: 12px;
+  color: #202020;
+}
+
+/* ---------- Desktop (>= 900px) ---------- */
 @media (width >= 900px) {
+  header nav .nav-hamburger {
+    display: none;
+  }
+
+  header nav .nav-main-inner {
+    grid-template-areas: 'brand sections tools';
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+  }
+
+  /* nav links always visible, horizontal, right-aligned; reset mobile full-bleed */
   header nav .nav-sections {
     display: block;
-    visibility: visible;
-    white-space: nowrap;
-  }
-
-  header nav[aria-expanded='true'] .nav-sections {
-    align-self: unset;
-  }
-
-  header nav .nav-sections .nav-drop {
-    position: relative;
-    padding-right: 16px;
-    cursor: pointer;
-  }
-
-  header nav .nav-sections .nav-drop::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    top: 0.5em;
-    right: 2px;
-    transform: rotate(135deg);
-    width: 6px;
-    height: 6px;
-    border: 2px solid currentcolor;
-    border-radius: 0 1px 0 0;
-    border-width: 2px 2px 0 0;
-  }
-
-  header nav .nav-sections .nav-drop[aria-expanded='true']::after {
-    top: unset;
-    bottom: 0.5em;
-    transform: rotate(315deg);
+    width: auto;
+    margin: 0;
   }
 
   header nav .nav-sections ul {
     display: flex;
-    gap: 24px;
-    margin: 0;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li {
-    flex: 0 1 auto;
-    position: relative;
+  header nav .nav-sections a {
+    padding: 15px 17px;
+    font-size: 14px;
+    font-weight: 400;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul {
+  /* hide the mobile-only "Home" item on desktop, matching the source */
+  header nav .nav-sections li.mobile-only {
     display: none;
-    position: relative;
   }
-
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
-    display: block;
-    position: absolute;
-    left: -24px;
-    width: 200px;
-    top: 150%;
-    padding: 16px;
-    background-color: var(--light-color);
-    white-space: initial;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li > ul::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 16px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--light-color);
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
-    padding: 8px 0;
-  }
-}
-
-/* tools */
-header nav .nav-tools {
-  grid-area: tools;
 }

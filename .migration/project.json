@@ -1,0 +1,14 @@
+{
+  "type": "da",
+  "sites": {
+    "wknd": {
+      "previewOrg": "akki761",
+      "previewSite": "wknd",
+      "contentHostUrl": "https://content.da.live/akki761/wknd/",
+      "libraryUrl": "https://main--sta-boilerplate--aemdemos.aem.page/tools/sidekick/library.json"
+    }
+  },
+  "features": [
+    "site-planning"
+  ]
+}

@@ -1,0 +1,82 @@
+/* cards-teaser — WKND image-list teaser row
+ * Values extracted from source .image-list.list computed styles.
+ * Teaser style: no card border/background; landscape image, uppercase title, uppercase gray description.
+ */
+
+.cards-teaser > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Card: source li is flex: 0 1 260px with 14px right gutter + 32px bottom margin, no border/bg */
+.cards-teaser > ul > li {
+  flex: 1 1 260px;
+  min-width: 0; /* allow shrink so nowrap description can truncate */
+  margin: 0 0 32px;
+  padding: 0 14px 0 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Image cell — landscape 13/10, cover */
+.cards-teaser .cards-teaser-card-image {
+  line-height: 0;
+}
+
+.cards-teaser .cards-teaser-card-image img {
+  width: 100%;
+  aspect-ratio: 13 / 10;
+  object-fit: cover;
+}
+
+/* Body — 9px below image */
+.cards-teaser .cards-teaser-card-body {
+  margin: 9px 0 0;
+  min-width: 0; /* let nowrap description truncate within the card width */
+}
+
+/* Title (h3 > a). Source: Source Sans Pro 18px/27px, weight 400, normal-case, blue #0045ff */
+.cards-teaser .cards-teaser-card-body h3 {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 27px;
+  text-transform: none;
+}
+
+.cards-teaser .cards-teaser-card-body h3 a:any-link {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.cards-teaser .cards-teaser-card-body h3 a:hover {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+/* Description. Source: 14px/21px, weight 400, uppercase, #696969, 16px above,
+   single-line truncated with ellipsis */
+.cards-teaser .cards-teaser-card-body p {
+  margin: 16px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-transform: uppercase;
+  color: #696969;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Cap card width on wide screens so a partial row stays left-aligned like source (flex 0 1 260px) */
+@media (width >= 900px) {
+  .cards-teaser > ul > li {
+    flex: 0 1 260px;
+  }
+}

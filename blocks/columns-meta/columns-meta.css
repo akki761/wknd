@@ -1,0 +1,45 @@
+/* columns-meta -- adventure metadata sidebar
+   Source: WKND content fragment (dl of label/value pairs).
+   Each pair is a stacked box with a light-grey left accent border,
+   a small uppercase grey label above a bold uppercase dark value. */
+
+.columns-meta {
+  margin: 18px 0;
+}
+
+/* each label/value pair -- stacked, with left accent border */
+.columns-meta > div {
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid var(--light-color); /* #ebebeb */
+  padding-left: 18px;
+  margin-bottom: 22.5px;
+}
+
+.columns-meta > div:last-child {
+  margin-bottom: 0;
+}
+
+/* reset the paragraphs EDS wraps around each cell's text */
+.columns-meta > div > div > p {
+  margin: 0;
+}
+
+/* label (first cell) */
+.columns-meta > div > div:first-child > p {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: rgb(105 105 105); /* #696969 grey label */
+  padding-top: 12px;
+}
+
+/* value (second cell) */
+.columns-meta > div > div:last-child > p {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  text-transform: uppercase;
+  color: var(--text-color); /* #202020 */
+}
