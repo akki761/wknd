@@ -3,6 +3,9 @@
 
 // PARSER IMPORTS
 import cardsProfileParser from './parsers/cards-profile.js';
+import cardsTeaserParser from './parsers/cards-teaser.js';
+import cardsMembersParser from './parsers/cards-members.js';
+import columnsFeaturedParser from './parsers/columns-featured.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -11,10 +14,20 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 // PARSER REGISTRY
 const parsers = {
   'cards-profile': cardsProfileParser,
+  'cards-teaser': cardsTeaserParser,
+  'cards-members': cardsMembersParser,
+  'columns-featured': columnsFeaturedParser,
 };
 
-// PAGE TEMPLATE CONFIGURATION - Embedded from page-templates.json (content-listing, US EN)
-const PAGE_TEMPLATE = {
+// PAGE TEMPLATE CONFIGURATIONS (content-listing, US EN)
+// The "content-listing" template groups two structurally-different pages:
+//   - about-us: profile-card grids (cards-profile)
+//   - magazine: a featured-article panel (columns-featured) + an article grid
+//     (cards-teaser), plus a Members Only section.
+// Each page is instrumented with its own block/section config, selected by URL
+// path in resolveTemplate() so neither page regresses the other.
+
+const ABOUT_US_TEMPLATE = {
   name: 'content-listing',
   description: 'Multi-section listing page: page title plus repeated titled sections, each with an underlined heading, intro text, and a grid of profile/teaser cards',
   urls: [
@@ -39,14 +52,61 @@ const PAGE_TEMPLATE = {
   ],
 };
 
-// TRANSFORMER REGISTRY
-const transformers = [
-  cleanupTransformer,
-  ...(PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [sectionsTransformer] : []),
-];
+const MAGAZINE_TEMPLATE = {
+  name: 'content-listing',
+  description: 'Magazine landing page: page title, a featured-article panel (columns-featured), an "All Articles" grid (cards-teaser), and a Members Only section',
+  urls: [
+    'https://wknd.site/us/en/magazine.html',
+  ],
+  blocks: [
+    {
+      name: 'columns-featured',
+      instances: ['.teaser.cmp-teaser--featured'],
+    },
+    {
+      name: 'cards-teaser',
+      instances: ['.image-list.list .cmp-image-list', '.cmp-image-list'],
+    },
+    {
+      name: 'cards-members',
+      instances: ['.teaser.cmp-teaser--secure'],
+    },
+  ],
+  sections: [
+    {
+      id: 'section-1-title', name: 'Page Title', selector: ['.title.aem-GridColumn--default--12:nth-of-type(1)'], style: null, blocks: [], defaultContent: ['.cmp-title'],
+    },
+    {
+      id: 'section-2-featured', name: 'Featured Article', selector: ['.teaser.cmp-teaser--featured'], style: null, blocks: ['columns-featured'], defaultContent: [],
+    },
+    {
+      id: 'section-3-articles', name: 'All Articles', selector: ['#title-0f80375ce9', '.title.cmp-title--underline'], style: null, blocks: ['cards-teaser'], defaultContent: ['.cmp-title--underline'],
+    },
+    {
+      id: 'section-4-members', name: 'Members Only', selector: ['#title-59d441f861'], style: null, blocks: ['cards-members'], defaultContent: ['.cmp-title--underline', '.cmp-text'],
+    },
+  ],
+};
 
-function executeTransformers(hookName, element, payload) {
-  const enhancedPayload = { ...payload, template: PAGE_TEMPLATE };
+function resolveTemplate(url) {
+  try {
+    const path = new URL(url).pathname;
+    if (/\/magazine(\.html)?$/.test(path)) return MAGAZINE_TEMPLATE;
+  } catch (e) {
+    // fall through to default
+  }
+  return ABOUT_US_TEMPLATE;
+}
+
+function buildTransformers(template) {
+  return [
+    cleanupTransformer,
+    ...(template.sections && template.sections.length > 1 ? [sectionsTransformer] : []),
+  ];
+}
+
+function executeTransformers(transformers, template, hookName, element, payload) {
+  const enhancedPayload = { ...payload, template };
   transformers.forEach((transformerFn) => {
     try {
       transformerFn.call(null, hookName, element, enhancedPayload);
@@ -80,7 +140,10 @@ export default {
 
     const main = document.body;
 
-    executeTransformers('beforeTransform', main, payload);
+    const PAGE_TEMPLATE = resolveTemplate(params.originalURL || url);
+    const transformers = buildTransformers(PAGE_TEMPLATE);
+
+    executeTransformers(transformers, PAGE_TEMPLATE, 'beforeTransform', main, payload);
 
     const pageBlocks = findBlocksOnPage(document, PAGE_TEMPLATE);
     pageBlocks.forEach((block) => {
@@ -95,7 +158,7 @@ export default {
       }
     });
 
-    executeTransformers('afterTransform', main, payload);
+    executeTransformers(transformers, PAGE_TEMPLATE, 'afterTransform', main, payload);
 
     const hr = document.createElement('hr');
     main.appendChild(hr);
