@@ -104,9 +104,8 @@ export default async function decorate(block) {
 
   footer.append(top);
 
-  // --- Divider ---
-  const hr = document.createElement('hr');
-  footer.append(hr);
+  // No divider: the source footer's separator is hidden (border:0/height:0), so
+  // there is no visible rule between the top row and the legal text.
 
   // --- Legal block ---
   if (legal) {

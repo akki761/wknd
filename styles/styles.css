@@ -321,8 +321,15 @@ main > .section > div {
   padding: 0 24px;
 }
 
+/* Breathing room below the header before the first section (page title).
+   Source WKND leaves ~33px between the header bottom and the page H1; the
+   generic 40px section margin was previously zeroed here, pinning the title to
+   the nav. Restore the source gap so every non-carousel page (magazine,
+   about-us, adventures/faqs listings, articles) has space below the header.
+   Carousel-hero-first pages (homepage, adventure-detail) stay flush via the
+   .carousel-hero-container override below (source measures ~0/6px there). */
 main > .section:first-of-type {
-  margin-top: 0;
+  margin-top: 33px;
 }
 
 @media (width >= 900px) {

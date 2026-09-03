@@ -38,6 +38,19 @@ footer .footer-brand img {
   margin-bottom: 16px;
 }
 
+/* Brand column: on desktop the logo and footer nav sit on ONE row (source). */
+@media (width >= 900px) {
+  footer .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 66px; /* source logo→nav gap */
+  }
+
+  footer .footer-brand img {
+    margin-bottom: 0;
+  }
+}
+
 /* hidden duplicate logo anchor (mirrors the source's doubled logo markup) */
 footer .footer-brand .footer-logo-dup {
   display: none;
@@ -90,11 +103,10 @@ footer .footer-social-icons a:hover svg {
   fill: #ffc700;
 }
 
-/* --- Divider --- */
-footer hr {
-  border: 0;
-  border-top: 1px solid rgb(235 235 235 / 20%);
-  margin: 24px 0;
+/* No divider: the source footer separator is hidden (border:0/height:0). The
+   legal block is spaced from the top row with margin instead. */
+footer .footer-legal {
+  margin-top: 24px;
 }
 
 /* --- Legal --- */
