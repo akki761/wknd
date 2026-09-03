@@ -87,6 +87,18 @@ body.appear {
   display: block;
 }
 
+/* WKND caps the whole page at a 1680px container centered in the viewport
+   (120px gutters beyond that width). This bounds the full-bleed blocks
+   (hero carousel, hero-banner) AND the footer — none are truly edge-to-edge
+   on the source; they all sit inside the 1680px page container. */
+header .nav-wrapper,
+main,
+footer {
+  max-width: 1680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 header {
   height: var(--nav-height);
 }
@@ -327,11 +339,14 @@ main .section.highlight {
   padding: 40px 0;
 }
 
-/* WKND section variants */
+/* WKND section variants.
+   Note: on the WKND homepage the "grey" featured section does NOT use a
+   full-width grey band — the grey is internal to the columns-featured block's
+   text column only (see blocks/columns-featured). So .grey carries no
+   background here; it only removes the default vertical margin so the block
+   sits flush like the source. */
 main .section.grey {
-  background-color: #eee;
   margin: 0;
-  padding: 40px 0;
 }
 
 main .section.dark {
@@ -351,4 +366,34 @@ main .section.sidebar > div {
     grid-template-columns: 1fr 3fr;
     align-items: start;
   }
+}
+
+/* WKND section heading underline — short yellow bar under default-content
+   section headings (matches source .cmp-title--underline). */
+main .section > .default-content-wrapper h2,
+main .section > .default-content-wrapper h3 {
+  position: relative;
+  padding-bottom: 12px;
+}
+
+main .section > .default-content-wrapper h2::after,
+main .section > .default-content-wrapper h3::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 84px;
+  border-bottom: 2px solid #ffea00;
+}
+
+/* WKND vertical rhythm: the hero carousel is full-bleed and flush to the
+   sections below it (source measures 0 gap carousel→featured). */
+main > .section.carousel-hero-container {
+  margin: 0;
+}
+
+main > .section.carousel-hero-container > div {
+  max-width: none;
+  padding: 0;
 }
