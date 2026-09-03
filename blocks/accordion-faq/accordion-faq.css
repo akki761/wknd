@@ -1,0 +1,92 @@
+/* Block: accordion-faq
+ * Design migrated from wknd.site/us/en/faqs (computed styles).
+ * Source pattern: stacked Q&A rows, each a bold question with a +/- toggle on
+ * the right and a 2px divider line below, and an expandable answer panel.
+ */
+
+.accordion-faq {
+  margin: 0;
+}
+
+/* accordion item -- source items are flush (no gap, no per-item box) */
+.accordion-faq .accordion-faq-item {
+  border: none;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.accordion-faq .accordion-faq-item + .accordion-faq-item {
+  margin-top: 0;
+}
+
+/* question row -- source: transparent bg, 13.33px padding, 2px #ebebeb divider */
+.accordion-faq .accordion-faq-item summary,
+.accordion-faq .accordion-faq-item-label {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 13px 40px 13px 0;
+  border-bottom: 2px solid var(--light-color);
+  color: #000;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+}
+
+.accordion-faq .accordion-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+/* +/- toggle icon on the right (source uses wknd-icon-font +/- glyph) */
+.accordion-faq .accordion-faq-item-label::before,
+.accordion-faq .accordion-faq-item-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  background-color: #000;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+/* horizontal bar -- always visible (the "-" and part of "+") */
+.accordion-faq .accordion-faq-item-label::before {
+  width: 16px;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+/* vertical bar -- makes the "+"; hidden when open to leave the "-" */
+.accordion-faq .accordion-faq-item-label::after {
+  width: 2px;
+  height: 16px;
+  right: 11px;
+  transform: translateY(-50%);
+}
+
+.accordion-faq .accordion-faq-item[open] .accordion-faq-item-label::after {
+  opacity: 0;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+/* answer panel -- source: padding 7px 0 0 7px, transparent */
+.accordion-faq .accordion-faq-item .accordion-faq-item-body {
+  padding: 7px 0 0 7px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.accordion-faq .accordion-faq-item .accordion-faq-item-body p {
+  margin: 0 0 13.5px;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.accordion-faq .accordion-faq-item .accordion-faq-item-body p:last-child {
+  margin-bottom: 0;
+}
