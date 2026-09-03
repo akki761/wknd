@@ -109,20 +109,28 @@ var CustomImportScript = (() => {
     const cells = [];
     const seenHrefs = /* @__PURE__ */ new Set();
     items.forEach((item) => {
-      var _a, _b, _c, _d, _e, _f;
+      var _a, _b, _c, _d, _e, _f, _g, _h;
       const itemHref = ((_a = item.querySelector("a.cmp-image-list__item-title-link")) == null ? void 0 : _a.getAttribute("href")) || ((_b = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _b.getAttribute("href")) || ((_c = item.querySelector("a[href]")) == null ? void 0 : _c.getAttribute("href"));
       if (itemHref) {
         if (seenHrefs.has(itemHref)) return;
         seenHrefs.add(itemHref);
       }
       const img = item.querySelector("img.cmp-image__image, .cmp-image img, img");
+      const imageHref = ((_d = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _d.getAttribute("href")) || ((_e = item.querySelector("a.cmp-image-list__item-title-link")) == null ? void 0 : _e.getAttribute("href"));
+      let imageCell = img || "";
+      if (img && imageHref) {
+        const imgLink = document2.createElement("a");
+        imgLink.setAttribute("href", imageHref);
+        imgLink.append(img);
+        imageCell = imgLink;
+      }
       const textCell = [];
       const titleLink = item.querySelector("a.cmp-image-list__item-title-link");
       const titleSpan = item.querySelector(".cmp-image-list__item-title");
-      const titleText = (_e = (_d = titleSpan || titleLink) == null ? void 0 : _d.textContent) == null ? void 0 : _e.trim();
+      const titleText = (_g = (_f = titleSpan || titleLink) == null ? void 0 : _f.textContent) == null ? void 0 : _g.trim();
       if (titleText) {
         const heading = document2.createElement("h3");
-        const href = (titleLink == null ? void 0 : titleLink.getAttribute("href")) || ((_f = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _f.getAttribute("href"));
+        const href = (titleLink == null ? void 0 : titleLink.getAttribute("href")) || ((_h = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _h.getAttribute("href"));
         if (href) {
           const a = document2.createElement("a");
           a.setAttribute("href", href);

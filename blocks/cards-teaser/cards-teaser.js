@@ -16,6 +16,22 @@ export default function decorate(block) {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
     img.closest('picture').replaceWith(optimizedPic);
   });
+
+  // Make each card image link to the same target as its title (source wraps the
+  // card image in an <a> to the article). Markdown can't carry a link that wraps
+  // only an image, so we recreate it here from the title link's href.
+  [...ul.children].forEach((li) => {
+    const picture = li.querySelector('.cards-teaser-card-image picture');
+    const href = li.querySelector('.cards-teaser-card-body a[href]')?.getAttribute('href');
+    if (picture && href && !picture.closest('a')) {
+      const a = document.createElement('a');
+      a.setAttribute('href', href);
+      a.setAttribute('aria-label', li.querySelector('.cards-teaser-card-body a[href]').textContent.trim());
+      picture.replaceWith(a);
+      a.append(picture);
+    }
+  });
+
   block.textContent = '';
   block.append(ul);
 }

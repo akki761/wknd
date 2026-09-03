@@ -27,6 +27,11 @@
   line-height: 0;
 }
 
+/* Card image link (added by cards-teaser.js) wraps the picture tightly */
+.cards-teaser .cards-teaser-card-image a {
+  display: block;
+}
+
 .cards-teaser .cards-teaser-card-image img {
   width: 100%;
   aspect-ratio: 13 / 10;
