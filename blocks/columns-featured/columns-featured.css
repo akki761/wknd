@@ -6,9 +6,12 @@
   flex-direction: column;
 }
 
-/* Text cell — light-grey panel */
+/* Text cell — light-grey panel.
+   Mobile stack order matches the source: the grey text panel sits ABOVE the
+   image (DOM order is text-then-image, so no order override is needed here).
+   The desktop split re-orders these into image-left via row-reverse below. */
 .columns-featured > div > div:not(.columns-featured-img-col) {
-  order: 1;
+  order: 0;
   display: flex;
   flex-direction: column;
   background-color: var(--light-color); /* #ebebeb */
@@ -74,9 +77,9 @@
   text-decoration: none;
 }
 
-/* Image cell */
+/* Image cell — sits below the text panel on mobile (source order) */
 .columns-featured > div > .columns-featured-img-col {
-  order: 0;
+  order: 1;
 }
 
 .columns-featured img {
@@ -86,7 +89,10 @@
   object-fit: cover;
 }
 
-@media (width >= 900px) {
+/* Source keeps the side-by-side split down to 768px (it only stacks at ≤767px),
+   so switch to the split at 768px — not 900px, which left the whole 768–899px
+   tablet range stacked. */
+@media (width >= 768px) {
   /* Split panel: image left (flex 2), text right (flex 1).
      DOM order is text-then-image, so row-reverse puts the image on the left. */
   .columns-featured > div {

@@ -89,6 +89,32 @@
   }
 }
 
+/* "All Trips" / "All Articles" CTA — the flat yellow WKND button that follows
+   the teaser row. Authored as a plain default-content <p><a> (no strong/em), so
+   scripts.js decorateButtons() leaves it as a bare link; the source renders it
+   as a solid yellow button (#ffea00, dark uppercase label, ~14px/32px padding,
+   square corners). Scoped to the teaser section container so only these CTAs
+   are affected — .button-wrapper links (authored buttons) keep their own style. */
+.cards-teaser-container .default-content-wrapper p a:only-child:not(.button) {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 14px 32px;
+  background-color: #ffea00; /* source WKND yellow (brighter than --accent-color) */
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0;
+}
+
+.cards-teaser-container .default-content-wrapper p a:only-child:not(.button):hover {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
 /* ---------------------------------------------------------------------------
  * Members variant — magazine "Members Only" locked teasers.
  * Source: .cmp-teaser--secure (.cmp-teaser--list). Two-up left-aligned cards;

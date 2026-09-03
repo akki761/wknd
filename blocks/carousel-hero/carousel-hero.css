@@ -51,15 +51,17 @@
   object-fit: cover;
 }
 
-/* white content card — overlaps the bottom of the image */
+/* content block — mobile/tablet: transparent and sitting BELOW the image (no
+   overlap, matching the source). The white overlapping card is desktop-only and
+   is applied in the ≥900px media query at the bottom of this file. */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   box-sizing: border-box;
   position: relative;
   z-index: 1;
   max-width: 1192px;
-  margin: -60px 16px 0;
-  padding: 18px 20px;
-  background-color: #fff;
+  margin: 18px 0 0;
+  padding: 0 14px;
+  background-color: transparent;
   color: var(--text-color);
   text-align: left;
 }
@@ -204,8 +206,10 @@
     height: 640px;
   }
 
+  /* white content card overlapping the bottom of the image (source geometry) */
   .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
     margin: -180px auto 0;
     padding: 18px 28px;
+    background-color: #fff;
   }
 }
