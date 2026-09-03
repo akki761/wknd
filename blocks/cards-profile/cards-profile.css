@@ -10,7 +10,7 @@
 main .section.cards-profile-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start; /* source left-aligns the card row under its heading */
   gap: 40px 24px;
   max-width: 1200px;
   margin: 40px auto;
@@ -25,10 +25,10 @@ main .section.cards-profile-container > div {
   padding: 0;
 }
 
-/* heading + intro span the full width above the grid */
+/* heading + intro span the full width above the grid (source left-aligns) */
 main .section.cards-profile-container > .default-content-wrapper {
   flex: 0 0 100%;
-  text-align: center;
+  text-align: left;
 }
 
 /* each authored block is one grid cell */
@@ -101,12 +101,16 @@ main .section.cards-profile-container > .cards-profile-wrapper {
   color: var(--text-color);
 }
 
-/* role / discipline line (source h5 -> p.role) */
+/* role / discipline line. Source authors it as an <h5>; the importer may keep
+   it as h5 or convert to p.role, so style BOTH the same way. Without the h5
+   rule it falls through to the global heading style (18px Asar serif). */
 .cards-profile .cards-profile-card-body p {
   margin: 0 0 3.5px;
 }
 
-.cards-profile .cards-profile-card-body p.role {
+.cards-profile .cards-profile-card-body p.role,
+.cards-profile .cards-profile-card-body h5 {
+  margin: 0 0 3.5px;
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-xs); /* 14px */
   font-weight: 600;

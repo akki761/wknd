@@ -397,3 +397,121 @@ main > .section.carousel-hero-container > div {
   max-width: none;
   padding: 0;
 }
+
+/* ---- Article template (tpl-article, scoped so the homepage is untouched) ----
+   Source article body is a 776px left-aligned reading column with an open
+   vertical rhythm (h1 60px lh, paragraphs justified 45px lh) and a small
+   uppercase Source Sans Pro byline authored as an <h4>. */
+body.tpl-article main > .section > .default-content-wrapper {
+  max-width: 776px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+body.tpl-article main h1 {
+  line-height: 60px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main h2 {
+  line-height: 54px;
+}
+
+body.tpl-article main .default-content-wrapper p {
+  line-height: 45px;
+  text-align: justify;
+}
+
+/* byline — authored as <h4> right under the title; source renders it as a
+   small uppercase sans label, not an Asar serif heading */
+body.tpl-article main h1 + h4 {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+/* the contributor image + blockquote should not stretch beyond the reading
+   column or justify oddly */
+body.tpl-article main .default-content-wrapper blockquote p {
+  text-align: left;
+}
+
+/* ---- Adventure-detail template: two-column body (metadata sidebar + tabs) ----
+   Source lays the adventure metadata (columns-meta + share label) in a narrow
+   left column beside the wide tabs panel. In the migrated DOM the title,
+   metadata, share label and tabs are the direct wrapper children of the section
+   carrying BOTH block containers (.columns-meta-container.tabs-detail-container).
+   Turn that section into a 1fr/3fr grid on desktop. Scoped to the template. */
+@media (width >= 900px) {
+  body.tpl-adventure-detail main > .section.columns-meta-container.tabs-detail-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    column-gap: 40px;
+    align-items: start;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* reset the default centered-column wrapper cap so wrappers flow into the grid */
+  body.tpl-adventure-detail main > .section.columns-meta-container.tabs-detail-container > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* title (first default-content-wrapper) spans both columns above the split */
+  body.tpl-adventure-detail
+    main > .section.columns-meta-container.tabs-detail-container
+    > .default-content-wrapper:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* metadata + share-label wrapper sit in the left column */
+  body.tpl-adventure-detail
+    main > .section.columns-meta-container.tabs-detail-container
+    > .columns-meta-wrapper,
+  body.tpl-adventure-detail
+    main > .section.columns-meta-container.tabs-detail-container
+    > .default-content-wrapper:not(:first-child) {
+    grid-column: 1;
+  }
+
+  /* tabs panel occupies the right column, spanning the metadata rows */
+  body.tpl-adventure-detail
+    main > .section.columns-meta-container.tabs-detail-container
+    > .tabs-detail-wrapper {
+    grid-column: 2;
+    grid-row: 2 / 5;
+  }
+
+  /* the empty section left behind by the `sidebar` section-metadata block adds
+     no content — collapse its vertical margin so it doesn't create a gap */
+  body.tpl-adventure-detail main > .section.sidebar:empty {
+    margin: 0;
+  }
+}
+
+/* "Share this Adventure" label — authored as <h5>, render as a small uppercase
+   sans label instead of the Asar serif heading default */
+body.tpl-adventure-detail
+  main > .section.columns-meta-container.tabs-detail-container h5 {
+  margin: 24px 0 8px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  text-transform: uppercase;
+}
+
+/* the adventure-detail hero is the "mini" carousel variant — 400px tall, not
+   the homepage's 640px hero. Scope the shorter height + smaller overlap to the
+   template so the homepage carousel is untouched. */
+body.tpl-adventure-detail main .carousel-hero .carousel-hero-slide .carousel-hero-slide-image img {
+  height: 400px;
+}

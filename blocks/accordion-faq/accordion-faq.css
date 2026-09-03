@@ -40,6 +40,24 @@
   display: none;
 }
 
+/* The question is authored as an <h3> inside the summary; without this it
+   inherits the global heading style (24px Asar serif) and breaks the row
+   rhythm. Force it to match the summary's label typography. */
+.accordion-faq .accordion-faq-item-label h1,
+.accordion-faq .accordion-faq-item-label h2,
+.accordion-faq .accordion-faq-item-label h3,
+.accordion-faq .accordion-faq-item-label h4,
+.accordion-faq .accordion-faq-item-label h5,
+.accordion-faq .accordion-faq-item-label h6 {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+  color: inherit;
+}
+
 /* +/- toggle icon on the right (source uses wknd-icon-font +/- glyph) */
 .accordion-faq .accordion-faq-item-label::before,
 .accordion-faq .accordion-faq-item-label::after {

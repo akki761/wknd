@@ -39,23 +39,26 @@
   min-width: 0; /* let nowrap description truncate within the card width */
 }
 
-/* Title (h3 > a). Source: Source Sans Pro 18px/27px, weight 400, normal-case, blue #0045ff */
+/* Title (h3 > a). Source: the visible title is a span computing Source Sans Pro
+   18px/27px, weight 600, UPPERCASE, dark #202020 (the wrapping anchor is just a
+   link; the span carries the paint). So render the title dark bold uppercase,
+   NOT the blue link default. Verified against the live homepage cards too. */
 .cards-teaser .cards-teaser-card-body h3 {
   margin: 0;
   font-family: var(--body-font-family);
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 600;
   line-height: 27px;
-  text-transform: none;
+  text-transform: uppercase;
 }
 
 .cards-teaser .cards-teaser-card-body h3 a:any-link {
-  color: var(--link-color);
+  color: var(--text-color);
   text-decoration: none;
 }
 
 .cards-teaser .cards-teaser-card-body h3 a:hover {
-  color: var(--link-color);
+  color: var(--text-color);
   text-decoration: underline;
 }
 
