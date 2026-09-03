@@ -38,7 +38,7 @@ header nav .nav-utility-inner {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 24px;
+  gap: 28px; /* source spacing between Sign In and the language toggle */
   min-height: 21px;
 }
 
@@ -51,6 +51,24 @@ header nav .nav-lang-toggle {
   font: inherit;
   cursor: pointer;
   padding: 0;
+
+  /* source renders utility labels (SIGN IN, EN-US) uppercase, though the nav
+     fragment stores mixed case — keep content-first and uppercase via CSS. */
+  text-transform: uppercase;
+}
+
+/* language toggle: US flag before the label (source uses a background-image on
+   the anchor: 25px flag, 35px left padding to clear it). Inline SVG data-URI so
+   the block stays self-contained (no flag asset in the repo).
+   NOTE: selector must out-rank `header nav .nav-utility a` (which sets
+   padding:0/background:none) — the toggle IS an <a> in the utility bar, so we
+   qualify with a.nav-lang-toggle to win the cascade. */
+header nav .nav-utility a.nav-lang-toggle {
+  padding-left: 35px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="%23b22234"/><path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="%23fff" stroke-width="300"/><rect width="2964" height="2100" fill="%233c3b6e"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 0 center;
+  background-size: 25px auto;
 }
 
 header nav .nav-utility a:hover,
@@ -106,6 +124,9 @@ header nav .nav-main-inner {
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
+
+  /* mobile keeps a compact row; desktop opens up to match the source's airy
+     ~62px top/bottom padding (header ≈190px) — see the desktop override below. */
   padding: 22px 24px;
   display: grid;
   grid-template-areas:
@@ -289,6 +310,13 @@ header nav .nav-search input {
   color: #202020;
 }
 
+/* source shows the placeholder as uppercase "SEARCH" */
+header nav .nav-search input::placeholder {
+  text-transform: uppercase;
+  color: #202020;
+  opacity: 1;
+}
+
 /* ---------- Desktop (>= 900px) ---------- */
 @media (width >= 900px) {
   header nav .nav-hamburger {
@@ -299,6 +327,10 @@ header nav .nav-search input {
     grid-template-areas: 'brand sections tools';
     grid-template-columns: auto 1fr auto;
     gap: 24px;
+
+    /* source main row is tall and airy (~62px top/bottom); this also centers the
+       search input vertically within the row so it no longer sits high. */
+    padding: 62px 24px;
   }
 
   /* nav links always visible, horizontal, right-aligned; reset the mobile
