@@ -30,6 +30,18 @@ header nav .nav-utility {
   font-size: 14px;
 }
 
+/* The page caps the header at a 1680px centered container (styles.css), which
+   would stop the dark bar at the gutters on wide screens. The SOURCE top bar is
+   full-bleed, so break its background out to the viewport edges and restore the
+   inner content position with matching padding. Below 1680px the header already
+   fills the viewport, so both calcs resolve to ~0 (harmless). */
+@media (width >= 900px) {
+  header nav .nav-utility {
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+  }
+}
+
 header nav .nav-utility-inner {
   box-sizing: border-box;
   max-width: 1200px;
@@ -182,8 +194,10 @@ header nav .nav-hamburger-icon::before {
   top: -7px;
 }
 
+/* source menu glyph is stepped — the bottom line is shorter (~60% width) */
 header nav .nav-hamburger-icon::after {
   top: 7px;
+  width: 13px;
 }
 
 /* brand/logo */
@@ -192,7 +206,9 @@ header nav .nav-brand {
 }
 
 header nav .nav-brand img {
-  height: 48px;
+  /* source mobile/tablet logo is 36px tall (96px wide); desktop grows to 48px
+     in the ≥900px override below. */
+  height: 36px;
   width: auto;
   display: block;
 }
@@ -331,6 +347,11 @@ header nav .nav-search input::placeholder {
     /* source main row is tall and airy (~62px top/bottom); this also centers the
        search input vertically within the row so it no longer sits high. */
     padding: 62px 24px;
+  }
+
+  /* desktop logo grows to the source's 48px */
+  header nav .nav-brand img {
+    height: 48px;
   }
 
   /* nav links always visible, horizontal, right-aligned; reset the mobile
