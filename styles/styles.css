@@ -586,16 +586,11 @@ body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) +
    Desktop only — below the two-column breakpoint (900px) the source stacks the
    icon bar BELOW the author name/role (left-aligned, normal flow), so the float
    and lift are scoped to the desktop media query. In the small-screen default
-   the buttons stay inline-block and abut into a left-aligned bar under the role. */
+   the buttons stay inline-block and abut into a left-aligned bar under the role,
+   with a top margin that separates the bar from the role line (matches source). */
 body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) {
   display: inline-block;
-  margin: 0;
-}
-
-/* first social <p> gets the top gap that separates the icon bar from the role */
-/* stylelint-disable-next-line no-descending-specificity */
-body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p:has(a) {
-  margin-top: 16px;
+  margin: 16px 0 0;
 }
 
 @media (width >= 900px) {
@@ -603,13 +598,6 @@ body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) +
     float: right;
     margin: 0;
     transform: translateY(-74px);
-  }
-
-  /* on desktop the first social <p> drops the small-screen top gap (the bar is
-     lifted onto the name row instead) */
-  /* stylelint-disable-next-line no-descending-specificity */
-  body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p:has(a) {
-    margin-top: 0;
   }
 
   /* close the float run after the last social link so nothing below wraps beside it */

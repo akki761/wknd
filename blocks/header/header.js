@@ -182,8 +182,15 @@ export default async function decorate(block) {
       link.href = a.getAttribute('href');
       link.textContent = a.textContent.trim();
       // "Home" is a mobile-only item in the source header (hidden on desktop).
-      if (link.textContent.toLowerCase() === 'home') li.classList.add('mobile-only');
-      if (here === a.getAttribute('href').replace(/\.html$/, '')) {
+      const isHome = link.textContent.toLowerCase() === 'home';
+      if (isHome) li.classList.add('mobile-only');
+      // Highlight the active nav item. Match the current page exactly OR any of
+      // its ancestors, so child/detail pages (e.g. /magazine/arctic-surfing)
+      // highlight their section item (Magazine). Skip "Home"/root-level items so
+      // they don't match every page.
+      const target = a.getAttribute('href').replace(/\.html$/, '');
+      const isSectionRoot = target && target !== '/' && !isHome;
+      if (here === target || (isSectionRoot && here.startsWith(`${target}/`))) {
         li.classList.add('active');
       }
       li.append(link);
