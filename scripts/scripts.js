@@ -282,6 +282,8 @@ function decorateTemplateFromPath() {
     document.body.classList.add('tpl-article');
   } else if (parts.length === 2 && parts[0] === 'adventures') {
     document.body.classList.add('tpl-adventure-detail');
+  } else if (parts.length === 1 && parts[0] === 'faqs') {
+    document.body.classList.add('tpl-faqs');
   }
 }
 
