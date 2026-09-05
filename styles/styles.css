@@ -945,3 +945,88 @@ body.tpl-adventure-detail
 body.tpl-adventure-detail main .carousel-hero .carousel-hero-slide .carousel-hero-slide-image img {
   height: 400px;
 }
+
+/* ---- FAQs template (tpl-faqs, scoped so other pages are untouched) ----
+   Source FAQ page is a single narrow reading column (~748px) holding the page
+   title, hero image, intro paragraph, the accordion, and the "Need more help"
+   block — all left-aligned to the same column edge. The generic section rule
+   already centers a padded 1200px region whose content edge lands at ~152px
+   (the same x as the source column's left edge). We keep that region centered
+   and instead cap the wrapper's children to the source column width, pinned
+   left, so the title, hero, intro, accordion, and "Need more help" all align
+   to one narrow ~748px reading column exactly like the source. */
+body.tpl-faqs main > .section > div > * {
+  max-width: 748px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Source underlines the FAQs page TITLE (h1) with the short yellow rule, and the
+   "Need more help?" heading is plain. The generic section-heading rule only
+   underlines h2/h3, so it lands on "Need more help?" instead — the reverse of the
+   source. Move the underline onto the h1 title and suppress it on the FAQ h3s. */
+body.tpl-faqs main > .section > .default-content-wrapper h1 {
+  position: relative;
+  padding-bottom: 12px;
+}
+
+body.tpl-faqs main > .section > .default-content-wrapper h1::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 84px;
+  border-bottom: 2px solid #ffea00;
+}
+
+body.tpl-faqs main > .section > .default-content-wrapper h3::after {
+  content: none;
+}
+
+/* Desktop: the source lays this page as a left reading column (title, hero,
+   intro, then the accordion — all stacked) with a right SIDEBAR that begins at
+   the very top of the content, its "Need more help?" heading aligned with the
+   FAQs title, NOT beside the accordion. Turn main into a centered 2-track grid
+   (a 748px reading column + a narrower right column). The left-column sections
+   (title/hero/intro, accordion, trailing empty) all sit in column 1 and stack in
+   source order; the "Need more help?" section — the one immediately after the
+   accordion container — is pinned to column 2, row 1, so it top-aligns with the
+   title. Below 900px the grid collapses and the sections stack in source order. */
+@media (width >= 900px) {
+  body.tpl-faqs main {
+    display: grid;
+    grid-template-columns: minmax(0, 748px) minmax(0, 300px);
+    justify-content: center;
+    column-gap: 64px;
+    align-items: start;
+    max-width: 1176px; /* 748 + 64 gap + 300 + 64 side padding */
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* every section defaults to the left reading column, stacking in source order */
+  body.tpl-faqs main > .section {
+    grid-column: 1;
+  }
+
+  /* the "Need more help?" section moves to the right sidebar, top row, so its
+     heading aligns with the FAQs title at the top of the page */
+  body.tpl-faqs main > .section.accordion-faq-container + .section {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  /* the grid already centers the content region, so the inner wrappers no longer
+     need their own centering padding/max-width — let them fill their track */
+  body.tpl-faqs main > .section > div {
+    max-width: none;
+    padding: 0;
+  }
+
+  /* right column: let "Need more help?" fill its narrower track, not the 748 cap */
+  body.tpl-faqs main > .section.accordion-faq-container + .section > div > * {
+    max-width: none;
+  }
+}
