@@ -56,5 +56,26 @@ export default function transform(hookName, element, payload) {
       while (bq.firstChild) p.append(bq.firstChild);
       bq.replaceWith(p);
     });
+
+    // "Share this story" related-article list (article aside): the source wraps
+    // each link's title and date in `.cmp-list__item-title` / `.cmp-list__item-date`
+    // spans, but the importer flattens spans to plain text — merging title + date
+    // into one run ("Western Australia Thursday, 9 Jul 2020"). To keep them as two
+    // distinct, separately-styleable lines that survive the markdown round-trip,
+    // wrap the date in <em> (preserved as `_..._`) and unwrap the title span. The
+    // date stays inside the same <a> so the whole card remains one hover target;
+    // the template CSS renders <em> as the small grey date line.
+    element.querySelectorAll('a.cmp-list__item-link').forEach((link) => {
+      const titleSpan = link.querySelector('.cmp-list__item-title');
+      const dateSpan = link.querySelector('.cmp-list__item-date');
+      if (dateSpan) {
+        const em = document.createElement('em');
+        em.textContent = dateSpan.textContent.trim();
+        dateSpan.replaceWith(em);
+      }
+      if (titleSpan) {
+        titleSpan.replaceWith(document.createTextNode(`${titleSpan.textContent.trim()} `));
+      }
+    });
   }
 }

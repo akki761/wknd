@@ -67,6 +67,18 @@ var CustomImportScript = (() => {
         while (bq.firstChild) p.append(bq.firstChild);
         bq.replaceWith(p);
       });
+      element.querySelectorAll("a.cmp-list__item-link").forEach((link) => {
+        const titleSpan = link.querySelector(".cmp-list__item-title");
+        const dateSpan = link.querySelector(".cmp-list__item-date");
+        if (dateSpan) {
+          const em = document.createElement("em");
+          em.textContent = dateSpan.textContent.trim();
+          dateSpan.replaceWith(em);
+        }
+        if (titleSpan) {
+          titleSpan.replaceWith(document.createTextNode(`${titleSpan.textContent.trim()} `));
+        }
+      });
     }
   }
 
