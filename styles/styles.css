@@ -561,35 +561,26 @@ body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) +
    footer uses) tinted with the button's foreground color, and the text label is
    hidden.
 
-   The three social <p>s are consecutive flat siblings with no shared wrapper, so
-   each is absolutely positioned against the author block (the wrapper is the
-   positioning context). They abut into one 144px-wide bar anchored to the right
-   edge: the 1st (Facebook) at right:96, 2nd (Twitter) at right:48, 3rd
-   (Instagram) at right:0 — so they read Facebook, Twitter, Instagram left→right.
-   `top:40px` lifts the bar level with the name (below the separator's padding). */
-/* stylelint-disable no-descending-specificity */
-body.tpl-article main .article-body .default-content-wrapper {
-  position: relative;
-}
-
+   The three social <p>s are consecutive flat siblings with no shared wrapper.
+   They FLOAT RIGHT with zero inter-button margin so they abut into one contiguous
+   bar at the right edge of the reading column, flowing in at the author block's
+   natural vertical position (just after the role line). Float — not absolute
+   positioning — because the only positioning context available is the full-height
+   article-body wrapper, against which any `top` would anchor to the article's top,
+   not the author section. Float-right reverses visual order, so the glyphs are
+   assigned last→first (see below) to keep the row reading Facebook, Twitter,
+   Instagram left→right. A clearing rule closes the float run. */
 body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) {
-  position: absolute;
-  top: 40px;
+  float: right;
   margin: 0;
 }
 
-body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p:has(a) {
-  right: 96px;
+/* close the float run after the last social link so nothing below wraps beside it */
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p + p:has(a)::after {
+  content: "";
+  display: block;
+  clear: both;
 }
-
-body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p:has(a) {
-  right: 48px;
-}
-
-body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p + p:has(a) {
-  right: 0;
-}
-/* stylelint-enable no-descending-specificity */
 
 /* stylelint-disable-next-line no-descending-specificity */
 body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) a {
@@ -613,13 +604,14 @@ body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]
 }
 
 /* Icons assigned by adjacent-sibling position after the author name: role <p>,
-   then the three social <p>s in source order. The buttons are absolutely
-   positioned (no float reversal), so DOM order is preserved: 1st→Facebook,
-   2nd→Twitter, 3rd→Instagram — reading Facebook, Twitter, Instagram left→right.
+   then the three social <p>s. Because the buttons FLOAT RIGHT, visual order is
+   reversed — the FIRST source <p> renders rightmost. To keep the row reading
+   Facebook, Twitter, Instagram left→right, glyphs are assigned in reverse:
+   1st→Instagram, 2nd→Twitter, 3rd→Facebook.
    (:nth-of-type counts all <p> siblings, so it can't isolate them here.) */
 /* stylelint-disable no-descending-specificity */
 body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p a::before {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.86s0 3.6-.07 4.86c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.86.07s-3.6 0-4.86-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.86c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.52.01-4.76.07-.9.04-1.38.19-1.7.32-.43.16-.74.36-1.06.68-.32.32-.52.63-.68 1.06-.13.32-.28.8-.32 1.7C3.42 8.48 3.4 8.85 3.4 12s.02 3.52.08 4.76c.04.9.19 1.38.32 1.7.16.43.36.74.68 1.06.32.32.63.52 1.06.68.32.13.8.28 1.7.32 1.24.06 1.61.07 4.76.07s3.52-.01 4.76-.07c.9-.04 1.38-.19 1.7-.32.43-.16.74-.36 1.06-.68.32-.32.52-.63.68-1.06.13-.32.28-.8.32-1.7.06-1.24.07-1.61.07-4.76s-.01-3.52-.07-4.76c-.04-.9-.19-1.38-.32-1.7a2.85 2.85 0 0 0-.68-1.06 2.85 2.85 0 0 0-1.06-.68c-.32-.13-.8-.28-1.7-.32C15.52 4.01 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88Zm0 8.15A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4Zm6.3-8.35a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z'/%3E%3C/svg%3E");
 }
 
 body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p a::before {
@@ -627,7 +619,7 @@ body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) +
 }
 
 body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p + p a::before {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.86s0 3.6-.07 4.86c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.86.07s-3.6 0-4.86-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.86c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.52.01-4.76.07-.9.04-1.38.19-1.7.32-.43.16-.74.36-1.06.68-.32.32-.52.63-.68 1.06-.13.32-.28.8-.32 1.7C3.42 8.48 3.4 8.85 3.4 12s.02 3.52.08 4.76c.04.9.19 1.38.32 1.7.16.43.36.74.68 1.06.32.32.63.52 1.06.68.32.13.8.28 1.7.32 1.24.06 1.61.07 4.76.07s3.52-.01 4.76-.07c.9-.04 1.38-.19 1.7-.32.43-.16.74-.36 1.06-.68.32-.32.52-.63.68-1.06.13-.32.28-.8.32-1.7.06-1.24.07-1.61.07-4.76s-.01-3.52-.07-4.76c-.04-.9-.19-1.38-.32-1.7a2.85 2.85 0 0 0-.68-1.06 2.85 2.85 0 0 0-1.06-.68c-.32-.13-.8-.28-1.7-.32C15.52 4.01 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88Zm0 8.15A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4Zm6.3-8.35a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z'/%3E%3C/svg%3E");
 }
 /* stylelint-enable no-descending-specificity */
 
