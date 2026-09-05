@@ -563,16 +563,22 @@ body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) +
 
    The three social <p>s are consecutive flat siblings with no shared wrapper.
    They FLOAT RIGHT with zero inter-button margin so they abut into one contiguous
-   bar at the right edge of the reading column, flowing in at the author block's
-   natural vertical position (just after the role line). Float — not absolute
-   positioning — because the only positioning context available is the full-height
-   article-body wrapper, against which any `top` would anchor to the article's top,
-   not the author section. Float-right reverses visual order, so the glyphs are
-   assigned last→first (see below) to keep the row reading Facebook, Twitter,
-   Instagram left→right. A clearing rule closes the float run. */
+   bar at the right edge of the reading column. Float — not absolute positioning —
+   because the only positioning context available is the full-height article-body
+   wrapper, against which any `top` would anchor to the article's top, not the
+   author section. In normal flow the floated bar sits AFTER the role line; a
+   `translateY(-74px)` (role line height + gap) shifts it up VISUALLY so its top
+   aligns with the author name row — matching the source (icon bar top-aligned
+   with the name, level with the avatar). Transform (not a negative margin) is used
+   because a negative margin on each float would collapse them onto one another;
+   transform is layout-neutral so the contiguous bar and horizontal positions are
+   preserved. Float-right reverses visual order, so the glyphs are assigned
+   last→first (see below) to keep the row reading Facebook, Twitter, Instagram
+   left→right. A clearing rule closes the float run. */
 body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) {
   float: right;
   margin: 0;
+  transform: translateY(-74px);
 }
 
 /* close the float run after the last social link so nothing below wraps beside it */
