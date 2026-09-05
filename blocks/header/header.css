@@ -297,7 +297,7 @@ header nav .nav-sections a {
 header nav .nav-sections a:hover,
 header nav .nav-sections li.active a {
   color: #202020;
-  background-color: #ffc700;
+  background-color: #ffea00; /* source active/hover accent */
 }
 
 /* "Home" is mobile-only in the source header */
