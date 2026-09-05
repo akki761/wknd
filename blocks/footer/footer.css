@@ -60,8 +60,11 @@ footer .footer-brand nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  /* source stacks footer links vertically on mobile/tablet; the ≥900px block
+     below switches them to a single horizontal row. */
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px 24px;
 }
 
@@ -135,5 +138,11 @@ footer .footer-legal a {
 
   footer .footer-social-icons {
     justify-content: flex-end;
+  }
+
+  /* links go back to a single horizontal row on desktop (source) — placed after
+     the base column rule so it wins by source order at equal specificity. */
+  footer .footer-brand nav ul {
+    flex-flow: row wrap;
   }
 }

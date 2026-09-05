@@ -412,8 +412,10 @@ main > .section.carousel-hero-container > div {
 /* ---- Article template (tpl-article, scoped so the homepage is untouched) ----
    Source article body is a 776px left-aligned reading column with an open
    vertical rhythm (h1 60px lh, paragraphs justified 45px lh) and a small
-   uppercase Source Sans Pro byline authored as an <h4>. */
-body.tpl-article main > .section > .default-content-wrapper {
+   uppercase Source Sans Pro byline authored as an <h4>. Only the body reading
+   column is capped at 776px — the lead hero image and breadcrumb sections span
+   the full content region (both columns). */
+body.tpl-article main > .section.article-body > .default-content-wrapper {
   max-width: 776px;
   margin-left: 0;
   margin-right: auto;
@@ -445,10 +447,283 @@ body.tpl-article main h1 + h4 {
   text-align: left;
 }
 
-/* the contributor image + blockquote should not stretch beyond the reading
-   column or justify oddly */
-body.tpl-article main .default-content-wrapper blockquote p {
+/* Breadcrumb — authored as a plain <ol> (the only ordered list in the article
+   template). Source renders it as a small uppercase Source Sans Pro trail with
+   inline items and a chevron separator, not a numbered/bulleted list. */
+body.tpl-article main > .section .default-content-wrapper ol {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.tpl-article main > .section .default-content-wrapper ol li {
+  display: inline;
+  font-size: 14px;
+  line-height: 21px;
+  text-transform: uppercase;
+}
+
+body.tpl-article main > .section .default-content-wrapper ol li + li::before {
+  content: "\203A"; /* › */
+  padding: 0 8px;
+  color: var(--text-color);
+}
+
+body.tpl-article main > .section .default-content-wrapper ol li a {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+/* Pullquote — source renders the article blockquote as a small indented body
+   quote: Source Sans Pro 18px / 27px, weight 400, dark, left-aligned, inset
+   ~40px on each side (margin 18px 40px). NOT a large serif heading. The authored
+   markup wraps the quote text in <strong>, so neutralize that weight.
+   Scoped to the article template. */
+body.tpl-article main .default-content-wrapper blockquote {
+  margin: 18px 40px;
+  padding: 0;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 27px;
   text-align: left;
+  color: var(--text-color);
+}
+
+/* inner paragraph inherits the quote treatment but drops the default-content
+   paragraph margin/justification */
+body.tpl-article main .default-content-wrapper blockquote p {
+  margin: 0;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  color: inherit;
+}
+
+body.tpl-article main .default-content-wrapper blockquote strong {
+  font-weight: 400;
+}
+
+/* ---- Author bio (article foot) ----
+   Source closes the article body with a light separator rule, then an author
+   card: a 60px circular avatar on the left, the author name (Asar 24px) and role
+   (small grey uppercase) beside it, and a row of dark square social buttons to
+   the right. The imported markup is flat default content — an avatar <p>, the
+   author <h2>, a role <p>, then one <p> per social link — so the pieces are
+   isolated structurally via :has(). Scoped to the article body. */
+
+/* separator rule above the author card, drawn on the avatar paragraph's top */
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main .article-body .default-content-wrapper p:has(picture):has(+ h2 + p + p a) {
+  margin: 48px 0 0;
+  padding-top: 40px;
+  border-top: 1px solid var(--light-color);
+}
+
+/* circular avatar, floated left so the name/role sit beside it */
+body.tpl-article main .article-body .default-content-wrapper p:has(picture):has(+ h2 + p + p a) img {
+  float: left;
+  width: 60px;
+  height: 60px;
+  margin-right: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* author name — keep the Asar serif but at the smaller bio size */
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) {
+  margin: 0;
+  padding-top: 8px;
+  font-size: 24px;
+  line-height: 36px;
+}
+
+/* role line — small grey uppercase, left-aligned (not justified like body copy) */
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p {
+  margin: 0 0 13px;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  text-align: left;
+  color: #696969;
+}
+
+/* social links — clear the avatar float, then lay the icon buttons in a row.
+   Each link is a dark 48px square; the network icon is drawn with a mask-image
+   (same glyphs the footer uses) tinted with the button's foreground color, and
+   the author-supplied text label is hidden. Icons are assigned by source order
+   (Facebook, Twitter, Instagram). */
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p:has(a) {
+  clear: both;
+}
+
+body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) {
+  display: inline-block;
+  margin: 16px 8px 0 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) a {
+  display: block;
+  width: 48px;
+  height: 48px;
+  font-size: 0; /* hide the text label, keep it for a11y/screen readers */
+  background-color: var(--dark-color);
+}
+
+/* the mask-tinted icon centered on the dark square */
+body.tpl-article main .article-body .default-content-wrapper p:has(> a[href="/"]) a::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--light-color);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 20px 20px;
+}
+
+/* Icons assigned by adjacent-sibling position after the author name: role <p>,
+   then Facebook, Twitter, Instagram. (:nth-of-type counts all <p> siblings, so
+   it can't isolate the social links here.) */
+/* stylelint-disable no-descending-specificity */
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p a::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z'/%3E%3C/svg%3E");
+}
+
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p a::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18.9 7.3c.01.17.01.35.01.52 0 5.3-4 11.4-11.3 11.4A11.2 11.2 0 0 1 1.5 17.4c.31.04.62.05.94.05 1.86 0 3.57-.63 4.93-1.7a3.98 3.98 0 0 1-3.71-2.76c.6.09 1.14.09 1.76-.07a3.97 3.97 0 0 1-3.18-3.9v-.05c.53.3 1.15.48 1.8.5A3.97 3.97 0 0 1 2.4 5.9c0-.75.2-1.44.55-2.04a11.28 11.28 0 0 0 8.18 4.15 4.48 4.48 0 0 1-.1-.91 3.97 3.97 0 0 1 6.87-2.72 7.8 7.8 0 0 0 2.52-.96 3.98 3.98 0 0 1-1.74 2.19 7.95 7.95 0 0 0 2.28-.62 8.53 8.53 0 0 1-1.98 2.04Z'/%3E%3C/svg%3E");
+}
+
+body.tpl-article main .article-body .default-content-wrapper h2:has(+ p + p a) + p + p + p + p a::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.86s0 3.6-.07 4.86c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.86.07s-3.6 0-4.86-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.86c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.52.01-4.76.07-.9.04-1.38.19-1.7.32-.43.16-.74.36-1.06.68-.32.32-.52.63-.68 1.06-.13.32-.28.8-.32 1.7C3.42 8.48 3.4 8.85 3.4 12s.02 3.52.08 4.76c.04.9.19 1.38.32 1.7.16.43.36.74.68 1.06.32.32.63.52 1.06.68.32.13.8.28 1.7.32 1.24.06 1.61.07 4.76.07s3.52-.01 4.76-.07c.9-.04 1.38-.19 1.7-.32.43-.16.74-.36 1.06-.68.32-.32.52-.63.68-1.06.13-.32.28-.8.32-1.7.06-1.24.07-1.61.07-4.76s-.01-3.52-.07-4.76c-.04-.9-.19-1.38-.32-1.7a2.85 2.85 0 0 0-.68-1.06 2.85 2.85 0 0 0-1.06-.68c-.32-.13-.8-.28-1.7-.32C15.52 4.01 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88Zm0 8.15A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4Zm6.3-8.35a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z'/%3E%3C/svg%3E");
+}
+/* stylelint-enable no-descending-specificity */
+
+/* ---- Article two-column layout (body + right sidebar) ----
+   Source lays the article body (col-8) beside a right sidebar (SHARE THIS STORY,
+   related-article list, and — on some pages — a PDF download). The importer emits
+   these as two consecutive sections tagged `.article-body` and `.article-aside`
+   (via Section Metadata). Turn `main` into a 2-track grid on desktop: full-bleed
+   sections (hero, breadcrumb) span both columns; the body/aside pair share one row.
+   No explicit grid-row is set — the body only fills column 1 of its row, so default
+   sparse auto-placement seats the aside in column 2 of that same row. This holds
+   whether or not the page has a hero image (arctic-surfing has none). */
+@media (width >= 900px) {
+  body.tpl-article main {
+    display: grid;
+    grid-template-columns: minmax(0, 776px) minmax(0, 300px);
+    justify-content: space-between;
+    column-gap: 96px;
+    align-items: start;
+  }
+
+  body.tpl-article main > .section {
+    grid-column: 1 / -1;
+  }
+
+  body.tpl-article main > .section.article-body {
+    grid-column: 1;
+  }
+
+  body.tpl-article main > .section.article-aside {
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  /* the sidebar's inner wrapper should fill its narrow track, not the 776px
+     reading-column cap that the body sections use */
+  body.tpl-article main > .section.article-aside > .default-content-wrapper {
+    max-width: none;
+  }
+}
+
+/* Sidebar "SHARE THIS STORY" label — small uppercase Source Sans Pro, authored as
+   an <h5> (would otherwise render as a big Asar serif heading). Source: 14px/600,
+   21px line-height, ~23px vertical margin, no letter-spacing. */
+body.tpl-article main > .section.article-aside h5 {
+  margin: 23px 0;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  text-transform: uppercase;
+}
+
+/* Related-article list — each entry is a link card: no bullets, an uppercase
+   dark title, and a 5px light-grey accent bar on the left with 8/16 padding.
+   Source keeps the title in --text-color (not the blue link color) and pads each
+   link block. The imported markup keeps title + date as a single link string. */
+body.tpl-article main > .section.article-aside ul {
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.tpl-article main > .section.article-aside ul li {
+  margin: 0 0 18px;
+  line-height: 27px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside ul li a {
+  display: block;
+  padding: 8px 16px;
+  border-left: 5px solid var(--light-color);
+  font-size: 18px;
+  line-height: 27px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+/* ---- PDF download widget (guide-la-skateparks) ----
+   Source renders a bordered asset card: a "Download PDF" heading/button plus the
+   filename / size / format metadata list. Recreate the card look. */
+body.tpl-article main > .section.article-aside h3 {
+  margin: 24px 0 4px;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+  text-transform: none;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside h3 a {
+  color: var(--link-color);
+}
+
+/* the download metadata (filename/size/format) as a compact card */
+body.tpl-article main > .section.article-aside ul:has(li p) {
+  margin: 8px 0 16px;
+  padding: 16px;
+  border: 1px solid var(--light-color);
+}
+
+body.tpl-article main > .section.article-aside ul:has(li p) li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside ul:has(li p) li p {
+  margin: 0;
+  line-height: 20px;
+  text-align: left;
+}
+
+body.tpl-article main > .section.article-aside ul:has(li p) li p:first-child {
+  font-weight: 600;
+  color: var(--dark-color, #505050);
 }
 
 /* ---- Adventure-detail template: two-column body (metadata sidebar + tabs) ----

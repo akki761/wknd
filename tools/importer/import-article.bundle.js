@@ -61,6 +61,12 @@ var CustomImportScript = (() => {
       ]);
       WebImporter.DOMUtils.remove(element, ["meta"]);
       WebImporter.DOMUtils.remove(element, ["h3.cmp-contentfragment__title"]);
+      element.querySelectorAll("blockquote").forEach((bq) => {
+        if (bq.closest(".cmp-text--quote")) return;
+        const p = document.createElement("p");
+        while (bq.firstChild) p.append(bq.firstChild);
+        bq.replaceWith(p);
+      });
     }
   }
 
@@ -141,9 +147,17 @@ var CustomImportScript = (() => {
         id: "section-3-body",
         name: "Article Title & Body",
         selector: ["main.aem-GridColumn--default--8"],
-        style: null,
+        style: "article-body",
         blocks: [],
         defaultContent: [".cmp-title", ".cmp-text"]
+      },
+      {
+        id: "section-4-sidebar",
+        name: "Article Sidebar (share / related / download)",
+        selector: ["aside.cmp-layoutcontainer--sidebar"],
+        style: "article-aside",
+        blocks: [],
+        defaultContent: [".cmp-title", ".cmp-list", ".cmp-download"]
       }
     ]
   };

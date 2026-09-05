@@ -42,5 +42,19 @@ export default function transform(hookName, element, payload) {
     // duplicates the page <h1 class="cmp-title__text">, so drop it — otherwise the
     // migrated article shows the title twice (once as h1, once as h3).
     WebImporter.DOMUtils.remove(element, ['h3.cmp-contentfragment__title']);
+
+    // Pullquote vs. plain quote (article template): on the source, only text
+    // components carrying `.cmp-text--quote` render the big Asar serif pullquote
+    // (36px). Plain `.cmp-text blockquote` (e.g. arctic-surfing) renders as small
+    // 18px body text. The importer flattens both to a bare <blockquote>, so the
+    // template CSS (which enlarges every article blockquote) would wrongly enlarge
+    // the plain ones. Downgrade non-quote blockquotes to paragraphs here so only
+    // the true pullquotes stay <blockquote> and get the large style.
+    element.querySelectorAll('blockquote').forEach((bq) => {
+      if (bq.closest('.cmp-text--quote')) return; // real pullquote — keep as-is
+      const p = document.createElement('p');
+      while (bq.firstChild) p.append(bq.firstChild);
+      bq.replaceWith(p);
+    });
   }
 }

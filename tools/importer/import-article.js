@@ -24,7 +24,10 @@ const PAGE_TEMPLATE = {
       id: 'section-2-breadcrumb', name: 'Breadcrumb', selector: ['.breadcrumb'], style: null, blocks: [], defaultContent: ['.breadcrumb'],
     },
     {
-      id: 'section-3-body', name: 'Article Title & Body', selector: ['main.aem-GridColumn--default--8'], style: null, blocks: [], defaultContent: ['.cmp-title', '.cmp-text'],
+      id: 'section-3-body', name: 'Article Title & Body', selector: ['main.aem-GridColumn--default--8'], style: 'article-body', blocks: [], defaultContent: ['.cmp-title', '.cmp-text'],
+    },
+    {
+      id: 'section-4-sidebar', name: 'Article Sidebar (share / related / download)', selector: ['aside.cmp-layoutcontainer--sidebar'], style: 'article-aside', blocks: [], defaultContent: ['.cmp-title', '.cmp-list', '.cmp-download'],
     },
   ],
 };
