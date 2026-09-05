@@ -767,27 +767,42 @@ body.tpl-article main > .section.article-aside ul li a em {
 }
 
 /* ---- PDF download widget (guide-la-skateparks) ----
-   Source renders a bordered asset card: a "Download PDF" heading/button plus the
-   filename / size / format metadata list. Recreate the card look. */
+   Source aside (below SHARE THIS STORY): a small uppercase "DOWNLOAD PDF" label,
+   a "Get the Full Story" line, a bordered filename/size/format metadata card, and
+   a dark full-width "Download PDF" button. Recreate each piece. */
+
+/* "DOWNLOAD PDF" heading — small uppercase Source Sans Pro label (like the SHARE
+   heading), not a large serif h3. */
 body.tpl-article main > .section.article-aside h3 {
   margin: 24px 0 4px;
   font-family: var(--body-font-family);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 22px;
-  text-transform: none;
+  line-height: 21px;
+  text-transform: uppercase;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 body.tpl-article main > .section.article-aside h3 a {
-  color: var(--link-color);
+  text-decoration: none;
+  color: var(--text-color);
 }
 
-/* the download metadata (filename/size/format) as a compact card */
+/* "Get the Full Story" prompt — bold uppercase intro line above the metadata */
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside h3 + p {
+  margin: 0 0 8px;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+/* the download metadata (filename/size/format) as a compact bordered card */
 body.tpl-article main > .section.article-aside ul:has(li p) {
   margin: 8px 0 16px;
   padding: 16px;
   border: 1px solid var(--light-color);
+  list-style: none;
 }
 
 body.tpl-article main > .section.article-aside ul:has(li p) li {
@@ -808,6 +823,27 @@ body.tpl-article main > .section.article-aside ul:has(li p) li p {
 body.tpl-article main > .section.article-aside ul:has(li p) li p:first-child {
   font-weight: 600;
   color: var(--dark-color, #505050);
+}
+
+/* standalone "Download PDF" call-to-action — dark full-width button. It's the
+   lone <p> whose link points at the coredownload asset (distinct from the related
+   -story links, which are /magazine/ pages). */
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside p:has(> a[href*="coredownload"]) {
+  margin: 0 0 24px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside p:has(> a[href*="coredownload"]) a {
+  display: block;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--background-color);
+  background-color: var(--dark-color);
 }
 
 /* ---- Adventure-detail template: two-column body (metadata sidebar + tabs) ----
