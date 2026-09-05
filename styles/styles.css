@@ -797,32 +797,40 @@ body.tpl-article main > .section.article-aside h3 + p {
   text-transform: uppercase;
 }
 
-/* the download metadata (filename/size/format) as a compact bordered card */
+/* the download metadata — source renders NO card/border: just the values
+   (filename, size, format) as small grey uppercase text flowing inline, with the
+   Filename/Size/Format labels hidden. Each li is an inline-block value; the first
+   <p> in each li is the label (hidden), the second is the value. */
 body.tpl-article main > .section.article-aside ul:has(li p) {
-  margin: 8px 0 16px;
-  padding: 16px;
-  border: 1px solid var(--light-color);
+  margin: 5px 0 18px;
+  padding: 0;
   list-style: none;
 }
 
 body.tpl-article main > .section.article-aside ul:has(li p) li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 6px;
-  font-size: 14px;
+  display: inline-block;
+  margin: 0 12px 0 0;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: #696969;
+}
+
+/* hide the label <p> (Filename/Size/Format), show only the value <p> inline */
+/* stylelint-disable-next-line no-descending-specificity */
+body.tpl-article main > .section.article-aside ul:has(li p) li p:first-child {
+  display: none;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 body.tpl-article main > .section.article-aside ul:has(li p) li p {
+  display: inline;
   margin: 0;
-  line-height: 20px;
+  font-size: 12px;
+  line-height: 18px;
   text-align: left;
-}
-
-body.tpl-article main > .section.article-aside ul:has(li p) li p:first-child {
-  font-weight: 600;
-  color: var(--dark-color, #505050);
+  text-transform: uppercase;
+  color: #696969;
 }
 
 /* standalone "Download PDF" call-to-action — dark full-width button. It's the
@@ -835,15 +843,31 @@ body.tpl-article main > .section.article-aside p:has(> a[href*="coredownload"]) 
 
 /* stylelint-disable-next-line no-descending-specificity */
 body.tpl-article main > .section.article-aside p:has(> a[href*="coredownload"]) a {
-  display: block;
-  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 16px;
   font-size: 16px;
   font-weight: 600;
-  text-align: center;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--background-color);
   background-color: var(--dark-color);
+}
+
+/* download-arrow icon before the button label (source uses an icon-font glyph;
+   recreate with a mask-image so it tints with the button's light foreground) */
+body.tpl-article main > .section.article-aside p:has(> a[href*="coredownload"]) a::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  background-color: currentcolor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 20px 20px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 20h14v-2H5v2zM12 3l-1.4 0v8.2L7.5 8.1 6 9.5l6 6 6-6-1.5-1.4-3.1 3.1V3H12z'/%3E%3C/svg%3E");
 }
 
 /* ---- Adventure-detail template: two-column body (metadata sidebar + tabs) ----
