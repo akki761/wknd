@@ -3,6 +3,45 @@
  * Teaser style: no card border/background; landscape image, uppercase title, uppercase gray description.
  */
 
+/* "Current Adventures" filter tab bar (adventures listing). The authored label
+ * list is replaced by cards-teaser.js with this button row. Flat WKND look:
+ * uppercase labels in a wrapping row, active tab underlined in WKND yellow. */
+.cards-teaser-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 20px 0 32px;
+}
+
+.cards-teaser-tab {
+  margin: 0;
+  padding: 10px 22px;
+  border: none;
+  background: none;
+  color: #696969;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.cards-teaser-tab:hover {
+  color: var(--text-color);
+}
+
+/* Selected tab: dark (black) box with light label */
+.cards-teaser-tab.is-active {
+  background-color: var(--text-color); /* #202020 */
+  color: #fff;
+}
+
+.cards-teaser-tab.is-active:hover {
+  color: #fff;
+}
+
 .cards-teaser > ul {
   list-style: none;
   margin: 0;
