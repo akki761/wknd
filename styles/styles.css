@@ -81,6 +81,14 @@ body {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
   line-height: 1.6;
+
+  /* The header utility bar goes full-bleed with a 100vw-based calc, and 100vw
+     INCLUDES the vertical scrollbar width while the content area does not — so on
+     browsers with a classic (non-overlay) scrollbar the bar is ~15px wider than
+     the page, producing a phantom horizontal scrollbar on every page. Clip that
+     sliver here. `clip` (not `hidden`) avoids creating a scroll container, so the
+     header's position:sticky keeps working. */
+  overflow-x: clip;
 }
 
 body.appear {
@@ -422,6 +430,29 @@ body.tpl-article main > .section.article-body > .default-content-wrapper {
 }
 
 body.tpl-article main h1 {
+  position: relative;
+  padding-bottom: 12px;
+  line-height: 60px;
+}
+
+/* short yellow rule under the article title (matches the WKND section-heading
+   underline; mirrors the tpl-faqs title treatment) */
+body.tpl-article main h1::after,
+body.tpl-adventure-detail main h1::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 84px;
+  border-bottom: 2px solid #ffea00;
+}
+
+/* adventure-detail title needs the positioning context + spacing for the rule
+   (and the source's more open 60px line-height, matching the article title) */
+body.tpl-adventure-detail main h1 {
+  position: relative;
+  padding-bottom: 12px;
   line-height: 60px;
 }
 
@@ -448,29 +479,34 @@ body.tpl-article main h1 + h4 {
 }
 
 /* Breadcrumb — authored as a plain <ol> (the only ordered list in the article
-   template). Source renders it as a small uppercase Source Sans Pro trail with
-   inline items and a chevron separator, not a numbered/bulleted list. */
-body.tpl-article main > .section .default-content-wrapper ol {
+   and adventure-detail templates). Source renders it as a small uppercase Source
+   Sans Pro trail with inline items and a chevron separator, not a
+   numbered/bulleted list. */
+body.tpl-article main > .section .default-content-wrapper ol,
+body.tpl-adventure-detail main > .section .default-content-wrapper ol {
   margin: 14px 0 0;
   padding: 0;
   list-style: none;
 }
 
-body.tpl-article main > .section .default-content-wrapper ol li {
+body.tpl-article main > .section .default-content-wrapper ol li,
+body.tpl-adventure-detail main > .section .default-content-wrapper ol li {
   display: inline;
   font-size: 14px;
   line-height: 21px;
   text-transform: uppercase;
 }
 
-body.tpl-article main > .section .default-content-wrapper ol li + li::before {
+body.tpl-article main > .section .default-content-wrapper ol li + li::before,
+body.tpl-adventure-detail main > .section .default-content-wrapper ol li + li::before {
   content: "\25B6"; /* ▶ filled triangle, matches source breadcrumb glyph */
   padding: 0 10px;
   font-size: 10px;
   color: #ffea00; /* source breadcrumb separator is yellow */
 }
 
-body.tpl-article main > .section .default-content-wrapper ol li a {
+body.tpl-article main > .section .default-content-wrapper ol li a,
+body.tpl-adventure-detail main > .section .default-content-wrapper ol li a {
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;

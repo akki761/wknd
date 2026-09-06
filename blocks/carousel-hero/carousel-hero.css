@@ -218,3 +218,11 @@
     background-color: #fff;
   }
 }
+
+/* image-only slides (e.g. the adventure-detail "mini" hero) author an empty
+   content column — collapse it so the white overlapping card never paints as a
+   phantom strip across the image. Placed last so it wins over the desktop card
+   rule above without raising specificity. */
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content:empty {
+  display: none;
+}

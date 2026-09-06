@@ -43,3 +43,25 @@
   text-transform: uppercase;
   color: var(--text-color); /* #202020 */
 }
+
+/* Tablet & mobile (<900px): the source drops the sidebar treatment — no left
+   accent border, no left padding — and floats the pairs into a compact
+   horizontal strip that wraps as space allows (36px gutter between columns).
+   The desktop bordered vertical stack above is unchanged. */
+@media (width < 900px) {
+  .columns-meta {
+    display: flow-root; /* contain the floated pairs so the following label clears */
+  }
+
+  .columns-meta > div {
+    float: left;
+    border-left: 0;
+    padding-left: 0;
+    padding-right: 36px;
+    margin-bottom: 22.5px;
+  }
+
+  .columns-meta > div:last-child {
+    margin-bottom: 22.5px; /* last pair may not be the bottom row when floated */
+  }
+}
