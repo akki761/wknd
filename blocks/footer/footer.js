@@ -16,12 +16,14 @@ function socialKey(a) {
 /**
  * Decorate the footer block.
  * Content-first: all copy/links/images come from content/us/footer.plain.html.
- * Metadata-independent dual-fetch: /content first (localhost), then root (prod).
+ * Metadata-independent dual-fetch: root first (works on localhost/aem up AND
+ * production), then the /content-prefixed path as a fallback. Root-first avoids
+ * a console 404 on production, where the /content path does not resolve.
  * @param {Element} block
  */
 export default async function decorate(block) {
-  let resp = await fetch('/content/us/footer.plain.html');
-  if (!resp.ok) resp = await fetch('/us/footer.plain.html');
+  let resp = await fetch('/us/footer.plain.html');
+  if (!resp.ok) resp = await fetch('/content/us/footer.plain.html');
   block.textContent = '';
   if (!resp.ok) return;
 

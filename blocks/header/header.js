@@ -3,12 +3,14 @@ const isDesktop = window.matchMedia('(min-width: 900px)');
 
 /**
  * Fetch the nav fragment. Metadata-independent dual-fetch:
- * /content first (localhost / aem up), then root (DA/EDS production).
+ * root first (works on localhost/aem up AND DA/EDS production), then the
+ * /content-prefixed path as a fallback. Root-first avoids a console 404 on
+ * production, where the /content path does not resolve.
  * @returns {Promise<Document|null>}
  */
 async function fetchNav() {
-  let resp = await fetch('/content/us/nav.plain.html');
-  if (!resp.ok) resp = await fetch('/us/nav.plain.html');
+  let resp = await fetch('/us/nav.plain.html');
+  if (!resp.ok) resp = await fetch('/content/us/nav.plain.html');
   if (!resp.ok) return null;
   const html = await resp.text();
   return new DOMParser().parseFromString(html, 'text/html');
@@ -57,8 +59,16 @@ function buildSearch(container) {
   input.placeholder = 'Search';
   input.setAttribute('aria-label', 'Search');
   form.append(input);
-  // No search index in this migration; prevent navigation to a 404.
-  form.addEventListener('submit', (e) => e.preventDefault());
+  // Submit navigates to the search results page with the query. The form's
+  // action + input[name="q"] already yield /us/en/search?q=<encoded>, so a
+  // native GET submit is enough; we only trim/guard the empty case.
+  form.addEventListener('submit', (e) => {
+    const q = input.value.trim();
+    if (!q) {
+      e.preventDefault();
+      input.focus();
+    }
+  });
   container.replaceChildren(form);
 }
 
