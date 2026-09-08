@@ -78,69 +78,67 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
-  // tools/importer/parsers/cards-teaser.js
-  function parse2(element, { document: document2 }) {
+  // tools/importer/parsers/dynamic-list.js
+  function normalizeRoot(href) {
+    if (!href) return "";
+    let path = href.trim();
+    try {
+      path = new URL(path, "https://wknd.site").pathname;
+    } catch (e) {
+    }
+    path = path.replace(/\.html?$/, "").replace(/\/+$/, "");
+    const idx = path.lastIndexOf("/");
+    return idx > 0 ? path.slice(0, idx) : path;
+  }
+  function deriveRoot(items) {
+    const counts = /* @__PURE__ */ new Map();
+    items.forEach((item) => {
+      var _a, _b, _c;
+      const href = ((_a = item.querySelector("a.cmp-image-list__item-title-link")) == null ? void 0 : _a.getAttribute("href")) || ((_b = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _b.getAttribute("href")) || ((_c = item.querySelector("a[href]")) == null ? void 0 : _c.getAttribute("href"));
+      const root = normalizeRoot(href);
+      if (root) counts.set(root, (counts.get(root) || 0) + 1);
+    });
+    let best = "";
+    let max = 0;
+    counts.forEach((n, root) => {
+      if (n > max) {
+        max = n;
+        best = root;
+      }
+    });
+    return best;
+  }
+  function extractCategories(tabsRoot) {
+    if (!tabsRoot) return [];
+    const tabs = Array.from(tabsRoot.querySelectorAll('.cmp-tabs__tab, [role="tab"]'));
+    return tabs.map((t) => t.textContent.trim()).filter(Boolean);
+  }
+  function parse2(element, { document: document2 }, options = {}) {
+    const { limit = 0 } = options;
     const tabsRoot = element.closest(".cmp-tabs, .tabs.panelcontainer");
     if (tabsRoot) {
-      if (tabsRoot.hasAttribute("data-cards-teaser-emitted")) {
+      if (tabsRoot.hasAttribute("data-dynamic-list-emitted")) {
         element.remove();
         return;
       }
-      tabsRoot.setAttribute("data-cards-teaser-emitted", "true");
+      tabsRoot.setAttribute("data-dynamic-list-emitted", "true");
     }
     const items = Array.from(
       element.querySelectorAll("li.cmp-image-list__item, .cmp-image-list__item")
     );
-    const cells = [];
-    const seenHrefs = /* @__PURE__ */ new Set();
-    items.forEach((item) => {
-      var _a, _b, _c, _d, _e, _f, _g, _h;
-      const itemHref = ((_a = item.querySelector("a.cmp-image-list__item-title-link")) == null ? void 0 : _a.getAttribute("href")) || ((_b = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _b.getAttribute("href")) || ((_c = item.querySelector("a[href]")) == null ? void 0 : _c.getAttribute("href"));
-      if (itemHref) {
-        if (seenHrefs.has(itemHref)) return;
-        seenHrefs.add(itemHref);
-      }
-      const img = item.querySelector("img.cmp-image__image, .cmp-image img, img");
-      const imageHref = ((_d = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _d.getAttribute("href")) || ((_e = item.querySelector("a.cmp-image-list__item-title-link")) == null ? void 0 : _e.getAttribute("href"));
-      let imageCell = img || "";
-      if (img && imageHref) {
-        const imgLink = document2.createElement("a");
-        imgLink.setAttribute("href", imageHref);
-        imgLink.append(img);
-        imageCell = imgLink;
-      }
-      const textCell = [];
-      const titleLink = item.querySelector("a.cmp-image-list__item-title-link");
-      const titleSpan = item.querySelector(".cmp-image-list__item-title");
-      const titleText = (_g = (_f = titleSpan || titleLink) == null ? void 0 : _f.textContent) == null ? void 0 : _g.trim();
-      if (titleText) {
-        const heading = document2.createElement("h3");
-        const href = (titleLink == null ? void 0 : titleLink.getAttribute("href")) || ((_h = item.querySelector("a.cmp-image-list__item-image-link")) == null ? void 0 : _h.getAttribute("href"));
-        if (href) {
-          const a = document2.createElement("a");
-          a.setAttribute("href", href);
-          a.textContent = titleText;
-          heading.append(a);
-        } else {
-          heading.textContent = titleText;
-        }
-        textCell.push(heading);
-      }
-      const desc = item.querySelector(".cmp-image-list__item-description");
-      if (desc && desc.textContent.trim()) {
-        const p = document2.createElement("p");
-        p.append(...Array.from(desc.childNodes).map((n) => n.cloneNode(true)));
-        textCell.push(p);
-      }
-      if (!img && textCell.length === 0) return;
-      cells.push([img || "", textCell.length ? textCell : ""]);
-    });
-    if (cells.length === 0) {
+    const root = deriveRoot(items);
+    if (!root) {
       element.replaceWith(...element.childNodes);
       return;
     }
-    const block = WebImporter.Blocks.createBlock(document2, { name: "cards-teaser", cells });
-    element.replaceWith(block);
+    const categories = extractCategories(tabsRoot);
+    const cells = [];
+    cells.push(["root", root]);
+    cells.push(["limit", String(limit)]);
+    if (categories.length >= 2) cells.push(["categories", categories.join(", ")]);
+    const block = WebImporter.Blocks.createBlock(document2, { name: "dynamic-list", cells });
+    const target = tabsRoot || element;
+    target.replaceWith(block);
   }
 
   // tools/importer/transformers/wknd-cleanup.js
@@ -163,6 +161,24 @@ var CustomImportScript = (() => {
       ]);
       WebImporter.DOMUtils.remove(element, ["meta"]);
       WebImporter.DOMUtils.remove(element, ["h3.cmp-contentfragment__title"]);
+      element.querySelectorAll("blockquote").forEach((bq) => {
+        if (bq.closest(".cmp-text--quote")) return;
+        const p = document.createElement("p");
+        while (bq.firstChild) p.append(bq.firstChild);
+        bq.replaceWith(p);
+      });
+      element.querySelectorAll("a.cmp-list__item-link").forEach((link) => {
+        const titleSpan = link.querySelector(".cmp-list__item-title");
+        const dateSpan = link.querySelector(".cmp-list__item-date");
+        if (dateSpan) {
+          const em = document.createElement("em");
+          em.textContent = dateSpan.textContent.trim();
+          dateSpan.replaceWith(em);
+        }
+        if (titleSpan) {
+          titleSpan.replaceWith(document.createTextNode(`${titleSpan.textContent.trim()} `));
+        }
+      });
     }
   }
 
@@ -216,7 +232,7 @@ var CustomImportScript = (() => {
   // tools/importer/import-adventures-listing.js
   var parsers = {
     "hero-banner": parse,
-    "cards-teaser": parse2
+    "cards-teaser": (element, ctx) => parse2(element, ctx, { limit: 0 })
   };
   var PAGE_TEMPLATE = {
     name: "adventures-listing",

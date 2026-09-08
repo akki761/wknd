@@ -3,16 +3,18 @@
 
 // PARSER IMPORTS
 import heroBannerParser from './parsers/hero-banner.js';
-import cardsTeaserParser from './parsers/cards-teaser.js';
+import dynamicListParser from './parsers/dynamic-list.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
 import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
+// "Current Adventures" becomes a dynamic-list (root /us/en/adventures, all
+// cards) with the source category tabs (All / Climbing / ...) preserved.
 const parsers = {
   'hero-banner': heroBannerParser,
-  'cards-teaser': cardsTeaserParser,
+  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: 0 }),
 };
 
 // PAGE TEMPLATE CONFIGURATION - Embedded from page-templates.json (adventures-listing, US EN)

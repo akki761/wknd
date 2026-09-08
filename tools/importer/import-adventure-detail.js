@@ -9,6 +9,7 @@ import tabsDetailParser from './parsers/tabs-detail.js';
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
 import sectionsTransformer from './transformers/wknd-sections.js';
+import adventureCategoryTransformer from './transformers/adventure-category.js';
 
 // PARSER REGISTRY
 const parsers = {
@@ -78,7 +79,37 @@ const PAGE_TEMPLATE = {
 const transformers = [
   cleanupTransformer,
   ...(PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [sectionsTransformer] : []),
+  adventureCategoryTransformer,
 ];
+
+/**
+ * Append a "Category" row to the page's Metadata block (built by
+ * createMetadata). The value is computed by adventureCategoryTransformer and
+ * stashed on main.dataset.wkndCategory. Runs after createMetadata so the row
+ * lands in the finished block; a no-op when no category was derived.
+ */
+function appendCategoryMetadata(main, document) {
+  const category = main.dataset.wkndCategory;
+  if (!category) return;
+  delete main.dataset.wkndCategory;
+
+  // createMetadata emits a <table> whose first row is a single "Metadata" cell.
+  const tables = main.querySelectorAll('table');
+  let metaTable = null;
+  tables.forEach((t) => {
+    const firstCell = t.querySelector('tr th, tr td');
+    if (firstCell && firstCell.textContent.trim().toLowerCase() === 'metadata') metaTable = t;
+  });
+  if (!metaTable) return;
+
+  const tr = document.createElement('tr');
+  const key = document.createElement('td');
+  key.textContent = 'Category';
+  const val = document.createElement('td');
+  val.textContent = category;
+  tr.append(key, val);
+  (metaTable.querySelector('tbody') || metaTable).append(tr);
+}
 
 /**
  * Execute all page transformers for a specific hook.
@@ -158,6 +189,7 @@ export default {
     const hr = document.createElement('hr');
     main.appendChild(hr);
     WebImporter.rules.createMetadata(main, document);
+    appendCategoryMetadata(main, document);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
 
