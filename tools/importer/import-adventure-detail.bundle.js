@@ -162,6 +162,25 @@ var CustomImportScript = (() => {
         "footer.experiencefragment.cmp-experiencefragment--footer"
       ]);
       WebImporter.DOMUtils.remove(element, ["meta"]);
+      WebImporter.DOMUtils.remove(element, ["h3.cmp-contentfragment__title"]);
+      element.querySelectorAll("blockquote").forEach((bq) => {
+        if (bq.closest(".cmp-text--quote")) return;
+        const p = document.createElement("p");
+        while (bq.firstChild) p.append(bq.firstChild);
+        bq.replaceWith(p);
+      });
+      element.querySelectorAll("a.cmp-list__item-link").forEach((link) => {
+        const titleSpan = link.querySelector(".cmp-list__item-title");
+        const dateSpan = link.querySelector(".cmp-list__item-date");
+        if (dateSpan) {
+          const em = document.createElement("em");
+          em.textContent = dateSpan.textContent.trim();
+          dateSpan.replaceWith(em);
+        }
+        if (titleSpan) {
+          titleSpan.replaceWith(document.createTextNode(`${titleSpan.textContent.trim()} `));
+        }
+      });
     }
   }
 
@@ -210,6 +229,32 @@ var CustomImportScript = (() => {
         }
       }
     }
+  }
+
+  // tools/importer/transformers/adventure-category.js
+  function mapCategory(activity) {
+    const a = (activity || "").toLowerCase();
+    if (!a) return "";
+    if (a.includes("climb")) return "Climbing";
+    if (a.includes("cycl")) return "Cycling";
+    if (a.includes("ski")) return "Skiing";
+    if (a.includes("surf")) return "Surfing";
+    return "Travel";
+  }
+  function findActivity(element) {
+    let activity = "";
+    element.querySelectorAll("div, tr").forEach((row) => {
+      const cells = row.children;
+      if (cells.length === 2 && cells[0].textContent.trim().toLowerCase() === "activity") {
+        activity = cells[1].textContent.trim();
+      }
+    });
+    return activity;
+  }
+  function transform3(hookName, element, payload) {
+    if (hookName !== "afterTransform") return;
+    const category = mapCategory(findActivity(element));
+    if (category) element.dataset.wkndCategory = category;
   }
 
   // tools/importer/import-adventure-detail.js
@@ -275,8 +320,28 @@ var CustomImportScript = (() => {
   };
   var transformers = [
     transform,
-    ...PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [transform2] : []
+    ...PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [transform2] : [],
+    transform3
   ];
+  function appendCategoryMetadata(main, document2) {
+    const category = main.dataset.wkndCategory;
+    if (!category) return;
+    delete main.dataset.wkndCategory;
+    const tables = main.querySelectorAll("table");
+    let metaTable = null;
+    tables.forEach((t) => {
+      const firstCell = t.querySelector("tr th, tr td");
+      if (firstCell && firstCell.textContent.trim().toLowerCase() === "metadata") metaTable = t;
+    });
+    if (!metaTable) return;
+    const tr = document2.createElement("tr");
+    const key = document2.createElement("td");
+    key.textContent = "Category";
+    const val = document2.createElement("td");
+    val.textContent = category;
+    tr.append(key, val);
+    (metaTable.querySelector("tbody") || metaTable).append(tr);
+  }
   function executeTransformers(hookName, element, payload) {
     const enhancedPayload = __spreadProps(__spreadValues({}, payload), { template: PAGE_TEMPLATE });
     transformers.forEach((transformerFn) => {
@@ -339,6 +404,7 @@ var CustomImportScript = (() => {
       const hr = document2.createElement("hr");
       main.appendChild(hr);
       WebImporter.rules.createMetadata(main, document2);
+      appendCategoryMetadata(main, document2);
       WebImporter.rules.transformBackgroundImages(main, document2);
       WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
       const rawPath = new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html?$/, "");

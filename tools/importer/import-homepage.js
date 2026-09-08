@@ -4,7 +4,7 @@
 // PARSER IMPORTS
 import carouselHeroParser from './parsers/carousel-hero.js';
 import columnsFeaturedParser from './parsers/columns-featured.js';
-import cardsTeaserParser from './parsers/cards-teaser.js';
+import dynamicListParser from './parsers/dynamic-list.js';
 import heroBannerParser from './parsers/hero-banner.js';
 
 // TRANSFORMER IMPORTS
@@ -12,10 +12,13 @@ import cleanupTransformer from './transformers/wknd-cleanup.js';
 import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
+// The homepage teaser grids ("Recent Articles" -> /us/en/magazine and
+// "Next Adventures" grid -> /us/en/adventures) become dynamic-list blocks
+// capped at 4 cards each; the root is derived per grid from its own cards.
 const parsers = {
   'carousel-hero': carouselHeroParser,
   'columns-featured': columnsFeaturedParser,
-  'cards-teaser': cardsTeaserParser,
+  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: 4 }),
   'hero-banner': heroBannerParser,
 };
 

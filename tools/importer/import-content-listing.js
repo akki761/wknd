@@ -3,7 +3,7 @@
 
 // PARSER IMPORTS
 import cardsProfileParser from './parsers/cards-profile.js';
-import cardsTeaserParser from './parsers/cards-teaser.js';
+import dynamicListParser from './parsers/dynamic-list.js';
 import cardsMembersParser from './parsers/cards-members.js';
 import columnsFeaturedParser from './parsers/columns-featured.js';
 
@@ -12,9 +12,12 @@ import cleanupTransformer from './transformers/wknd-cleanup.js';
 import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
+// Magazine's "All Articles" grid becomes a dynamic-list (root /us/en/magazine,
+// all cards). Members Only (cards-members) and the Featured Article
+// (columns-featured) stay static; about-us uses only cards-profile.
 const parsers = {
   'cards-profile': cardsProfileParser,
-  'cards-teaser': cardsTeaserParser,
+  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: 0 }),
   'cards-members': cardsMembersParser,
   'columns-featured': columnsFeaturedParser,
 };
