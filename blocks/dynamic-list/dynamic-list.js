@@ -72,6 +72,33 @@ function normalizePath(p) {
   return path.replace(/\.html?$/, '').replace(/\/+$/, '') || '/';
 }
 
+// Fallback: read a page's Activity/Category from its own content when the
+// index doesn't carry a `category` column yet. Mirrors the old cards-teaser
+// filter (reads the columns-meta "Activity" row), but also accepts a
+// "Category" row if one is authored. Returns '' on any failure.
+async function fetchCategory(href) {
+  try {
+    const url = new URL(href, window.location.href);
+    const resp = await fetch(`${url.pathname}.plain.html`);
+    if (!resp.ok) return '';
+    const html = await resp.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    let value = '';
+    doc.querySelectorAll('.columns-meta > div, .metadata > div').forEach((row) => {
+      const cells = row.children;
+      if (cells.length >= 2) {
+        const key = normalize(cells[0].textContent);
+        if ((key === 'activity' || key === 'category') && !value) {
+          value = cells[1].textContent.trim();
+        }
+      }
+    });
+    return value;
+  } catch (e) {
+    return '';
+  }
+}
+
 // A row is a DIRECT child of root when, after removing the root prefix, exactly
 // one path segment remains. The root/index page itself has zero remaining
 // segments; grandchildren have two or more.
@@ -145,11 +172,24 @@ function buildCard(row) {
 // Build the category tab bar and wire up filtering. Cards are tagged by their
 // index `category`; a card whose category doesn't match any specific tab falls
 // into the catch-all (the last tab, e.g. "Travel").
-function buildTabs(block, ul, categories) {
+async function buildTabs(block, ul, categories) {
   const allTab = categories[0];
   const catchAll = categories[categories.length - 1];
   const specificTabs = categories.slice(1, -1);
   const cards = [...ul.children];
+
+  // Resolve each card's category. Prefer the index value (set as data-category);
+  // if it's absent (index not yet emitting a `category` column), fall back to
+  // fetching it from the card's page so the filter still works.
+  await Promise.all(cards.map(async (li) => {
+    if (!li.dataset.category) {
+      const href = li.querySelector('a[href]')?.getAttribute('href');
+      if (href) {
+        const cat = await fetchCategory(href);
+        if (cat) li.dataset.category = cat;
+      }
+    }
+  }));
 
   cards.forEach((li) => {
     const cat = normalize(li.dataset.category);
@@ -214,5 +254,5 @@ export default async function decorate(block) {
   });
   block.append(ul);
 
-  if (categories.length >= 2) buildTabs(block, ul, categories);
+  if (categories.length >= 2) await buildTabs(block, ul, categories);
 }
