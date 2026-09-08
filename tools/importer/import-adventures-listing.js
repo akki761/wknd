@@ -14,7 +14,7 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 // cards) with the source category tabs (All / Climbing / ...) preserved.
 const parsers = {
   'hero-banner': heroBannerParser,
-  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: 0 }),
+  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: -1 }),
 };
 
 // PAGE TEMPLATE CONFIGURATION - Embedded from page-templates.json (adventures-listing, US EN)

@@ -17,7 +17,7 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 // (columns-featured) stay static; about-us uses only cards-profile.
 const parsers = {
   'cards-profile': cardsProfileParser,
-  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: 0 }),
+  'cards-teaser': (element, ctx) => dynamicListParser(element, ctx, { limit: -1 }),
   'cards-members': cardsMembersParser,
   'columns-featured': columnsFeaturedParser,
 };

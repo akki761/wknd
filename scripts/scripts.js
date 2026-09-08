@@ -240,32 +240,6 @@ function loadDelayed() {
 }
 
 /**
- * Redirects the site root to the WKND homepage (/us/en).
- * WKND's homepage is a locale landing page, not the bare root, so requests to
- * `/` or `/index` are sent to `/us/en`. Scoped to the exact root paths only,
- * so every other page renders normally. Returns true if a redirect was issued.
- */
-function redirectRootToHome() {
-  const { pathname } = window.location;
-  // Production/preview serves content at the root; the local dev server mounts
-  // it under /content. Handle the bare root in both, preserving the prefix.
-  const roots = {
-    '/': '/us/en',
-    '/index': '/us/en',
-    '/index.html': '/us/en',
-    '/content': '/content/us/en',
-    '/content/': '/content/us/en',
-    '/content/index': '/content/us/en',
-    '/content/index.html': '/content/us/en',
-  };
-  if (roots[pathname]) {
-    window.location.replace(roots[pathname]);
-    return true;
-  }
-  return false;
-}
-
-/**
  * Adds a template class to <body> based on the URL path so template-specific
  * CSS (e.g. the article reading-column width, adventure-detail two-column
  * layout) can be scoped without affecting other templates like the homepage.
@@ -288,7 +262,6 @@ function decorateTemplateFromPath() {
 }
 
 async function loadPage() {
-  if (redirectRootToHome()) return;
   decorateTemplateFromPath();
   await loadEager(document);
   await loadLazy(document);
