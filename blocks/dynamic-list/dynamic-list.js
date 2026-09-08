@@ -25,10 +25,11 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
  * renders nothing (graceful empty state) rather than erroring.
  */
 
-// Candidate index locations, tried in order. The locale-scoped index is
-// preferred; the site-root index is the fallback. Both are standard EDS
-// query-index endpoints.
-const INDEX_PATHS = ['/us/en/query-index.json', '/query-index.json'];
+// Candidate index locations, tried in order. The site-root index is tried
+// first because it resolves on both localhost/aem up AND production; the
+// locale-scoped path is the fallback (it 404s on production, which would log a
+// console error if tried first). Both are standard EDS query-index endpoints.
+const INDEX_PATHS = ['/query-index.json', '/us/en/query-index.json'];
 
 let indexPromise;
 
