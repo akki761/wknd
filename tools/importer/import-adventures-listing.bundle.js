@@ -114,7 +114,7 @@ var CustomImportScript = (() => {
     return tabs.map((t) => t.textContent.trim()).filter(Boolean);
   }
   function parse2(element, { document: document2 }, options = {}) {
-    const { limit = 0 } = options;
+    const { limit = -1 } = options;
     const tabsRoot = element.closest(".cmp-tabs, .tabs.panelcontainer");
     if (tabsRoot) {
       if (tabsRoot.hasAttribute("data-dynamic-list-emitted")) {
@@ -232,7 +232,7 @@ var CustomImportScript = (() => {
   // tools/importer/import-adventures-listing.js
   var parsers = {
     "hero-banner": parse,
-    "cards-teaser": (element, ctx) => parse2(element, ctx, { limit: 0 })
+    "cards-teaser": (element, ctx) => parse2(element, ctx, { limit: -1 })
   };
   var PAGE_TEMPLATE = {
     name: "adventures-listing",

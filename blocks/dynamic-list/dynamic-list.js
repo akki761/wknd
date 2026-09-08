@@ -5,7 +5,7 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
  * Authored as a simple block table:
  *   | dynamic-list |                    |
  *   | root         | /us/en/adventures  |
- *   | limit        | 4                  |  (empty / 0 = all)
+ *   | limit        | 4                  |  (empty or <= -1 = all; N = first N)
  *   | categories   | All, Climbing, ... |  (optional — enables the tab filter)
  *
  * On decorate it fetches the published query-index.json, keeps the rows whose
@@ -113,7 +113,8 @@ function isDirectChild(rowPath, root) {
 // Read the authored config. Rows are label/value pairs; accept root, limit and
 // categories in any order, tolerant of extra whitespace.
 function readConfig(block) {
-  const config = { root: '', limit: 0, categories: [] };
+  // limit defaults to -1 (all) so an omitted/blank limit lists everything.
+  const config = { root: '', limit: -1, categories: [] };
   [...block.children].forEach((row) => {
     const cells = row.children;
     if (cells.length < 2) return;
@@ -122,7 +123,7 @@ function readConfig(block) {
     if (key === 'root') config.root = normalizePath(value);
     else if (key === 'limit') {
       const n = parseInt(value, 10);
-      config.limit = Number.isNaN(n) ? 0 : n;
+      config.limit = Number.isNaN(n) ? -1 : n;
     } else if (key === 'categories') {
       config.categories = value.split(',').map((s) => s.trim()).filter(Boolean);
     }
@@ -243,7 +244,8 @@ export default async function decorate(block) {
     .map((row) => ({ ...row, path: normalizePath(row.path) }))
     .filter((row) => isDirectChild(row.path, root));
 
-  const rows = limit > 0 ? children.slice(0, limit) : children;
+  // limit <= -1 means "all"; any limit >= 0 slices to that count (0 shows none).
+  const rows = limit <= -1 ? children : children.slice(0, limit);
   if (rows.length === 0) return; // graceful empty state
 
   const ul = document.createElement('ul');

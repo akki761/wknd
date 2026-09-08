@@ -15,7 +15,8 @@
  *
  * - root:       derived from the cards' shared parent path (the folder the
  *               linked detail pages live in), so it is never hardcoded.
- * - limit:      passed per-template via options.limit (homepage = 4,
+ * - limit:      passed per-template via options.limit (homepage = 4;
+ *               listings = -1 = all;
  *               full listings = 0 = all).
  * - categories: when the grid lives inside a .cmp-tabs group (adventures
  *               listing), the source tab labels (All / Climbing / ...) are
@@ -70,7 +71,7 @@ function extractCategories(tabsRoot) {
 }
 
 export default function parse(element, { document }, options = {}) {
-  const { limit = 0 } = options;
+  const { limit = -1 } = options; // -1 = list all children
 
   // Tabbed listing: emit only once per tab group; remove later per-category
   // panels so they don't produce duplicate blocks.
